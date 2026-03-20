@@ -1,0 +1,1567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>offpiste AI — AI Strategy & Business Transformation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,700&family=Roboto+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:      #2C1A14;
+      --navy-90:   rgba(44,26,20,0.9);
+      --blue:      #C97B6A;
+      --mid-blue:  #D9967F;
+      --teal:      #C97B6A;
+      --teal-dark: #A3574A;
+      --warm:      #F8F0EB;
+      --white:     #FFFFFF;
+      --off-white: #F8F0EB;
+      --grey-100:  #F0EAE6;
+      --grey-200:  #E0D3CE;
+      --grey-400:  #A89890;
+      --grey-600:  #7A6860;
+      --grey-800:  #3A2820;
+      --text:      #2A1510;
+      --radius:    12px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Roboto Mono', monospace;
+      background: var(--white);
+      color: var(--text);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--grey-100); }
+    ::-webkit-scrollbar-thumb { background: var(--teal); border-radius: 3px; }
+
+    /* ── UTILITY ───────────────────────────────────────────── */
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 40px; }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+
+    /* ── NAV ───────────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--grey-200);
+      transition: box-shadow 0.3s;
+    }
+    nav.scrolled { box-shadow: 0 2px 24px rgba(0,0,0,0.06); }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 68px;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; }
+    .nav-logo-text {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 17px; font-weight: 700;
+      color: var(--text); letter-spacing: -0.01em;
+    }
+    .nav-logo-text em { font-style: normal; color: var(--teal); }
+    .nav-links {
+      display: flex; align-items: center; gap: 32px; list-style: none;
+    }
+    .nav-links a {
+      font-size: 14px; font-weight: 500; color: var(--grey-600);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      font-family: 'Roboto Mono', monospace;
+      font-weight: 700; font-size: 13px; letter-spacing: 0.01em;
+      cursor: pointer; border: none; text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .btn-primary {
+      background: var(--teal); color: var(--white);
+      padding: 11px 24px; border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(201,123,106,0.3);
+    }
+    .btn-primary:hover {
+      background: var(--teal-dark);
+      box-shadow: 0 4px 20px rgba(201,123,106,0.4);
+      transform: translateY(-1px);
+    }
+    .btn-ghost {
+      background: transparent; color: var(--text);
+      padding: 11px 24px; border-radius: 8px;
+      border: 1.5px solid var(--grey-200);
+    }
+    .btn-ghost:hover { border-color: var(--grey-400); transform: translateY(-1px); }
+    .nav-toggle {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; padding: 4px;
+    }
+    .nav-toggle span {
+      display: block; width: 22px; height: 2px;
+      background: var(--text); border-radius: 2px;
+    }
+
+    /* ── HERO ──────────────────────────────────────────────── */
+    #hero {
+      padding: 148px 0 96px;
+      background: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ── BACKGROUND PATHS ──────────────────────────────────────── */
+    .hero-bg-paths {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .bg-paths-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+    #hero .container {
+      position: relative;
+      z-index: 1;
+    }
+    .hero-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+    .hero-text {}
+    .hero-label {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 12px; font-weight: 600; letter-spacing: 0.06em;
+      color: var(--teal); text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .hero-label span {
+      display: block; width: 20px; height: 1.5px; background: var(--teal);
+    }
+    h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(36px, 4.5vw, 58px);
+      font-weight: 700;
+      line-height: 1.13;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+    h1 em {
+      font-style: italic;
+      color: var(--teal);
+    }
+    .hero-sub {
+      font-size: 15px; font-weight: 400; line-height: 1.75;
+      color: var(--grey-600); max-width: 440px; margin-bottom: 36px;
+    }
+    .hero-ctas { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .hero-trust {
+      display: flex; align-items: center; gap: 20px; margin-top: 40px;
+      padding-top: 32px; border-top: 1px solid var(--grey-200);
+    }
+    .trust-badge {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .trust-stars { display: flex; gap: 2px; }
+    .trust-stars svg { width: 13px; height: 13px; fill: #F59E0B; }
+    .trust-text { font-size: 11px; font-weight: 600; color: var(--grey-600); letter-spacing: 0.04em; text-transform: uppercase; }
+    .trust-divider { width: 1px; height: 28px; background: var(--grey-200); }
+
+    /* hero visual */
+    .hero-visual { position: relative; }
+    .hero-card-main {
+      background: var(--white);
+      border-radius: 18px;
+      border: 1px solid var(--grey-200);
+      box-shadow:
+        0 4px 6px rgba(0,0,0,0.03),
+        0 20px 48px rgba(0,0,0,0.07),
+        0 1px 0 rgba(255,255,255,0.8) inset;
+      overflow: hidden;
+      aspect-ratio: 4/3;
+      position: relative;
+    }
+    .hero-card-main img { width: 100%; height: 100%; object-fit: cover; }
+    .hero-card-float {
+      position: absolute;
+      bottom: -20px; left: -28px;
+      background: var(--white);
+      border-radius: 14px;
+      border: 1px solid var(--grey-200);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      padding: 16px 20px;
+      min-width: 180px;
+    }
+    .float-label { font-size: 10px; font-weight: 700; color: var(--grey-400); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+    .float-val { font-size: 22px; font-weight: 800; color: var(--text); }
+    .float-sub { font-size: 11px; color: var(--grey-400); margin-top: 2px; }
+    .hero-card-float2 {
+      position: absolute;
+      top: -18px; right: -20px;
+      background: var(--navy);
+      border-radius: 14px;
+      padding: 14px 18px;
+      min-width: 148px;
+      box-shadow: 0 8px 28px rgba(201,123,106,0.25);
+    }
+    .float2-label { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.5); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+    .float2-val { font-size: 20px; font-weight: 800; color: var(--white); }
+    .float2-bar { display: flex; gap: 3px; margin-top: 8px; }
+    .float2-bar span {
+      flex: 1; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.15);
+    }
+    .float2-bar span.active { background: var(--teal); }
+
+    /* ── HERO DASHBOARD ─────────────────────────────────────── */
+    .dashboard {
+      background: #1C100C; width: 100%; height: 100%;
+      font-family: 'Roboto Mono', monospace;
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .dash-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(201,123,106,0.12);
+      background: rgba(201,123,106,0.04);
+      flex-shrink: 0;
+    }
+    .dash-dots { display: flex; gap: 6px; }
+    .dash-dot { width: 9px; height: 9px; border-radius: 50%; }
+    .dash-dot.r { background: #FF5F57; }
+    .dash-dot.y { background: #FFBD2E; }
+    .dash-dot.g { background: #28CA41; }
+    .dash-title { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.4); letter-spacing: 0.1em; text-transform: uppercase; }
+    .dash-live { display: flex; align-items: center; gap: 5px; font-size: 9px; font-weight: 700; color: #28CA41; letter-spacing: 0.08em; }
+    .dash-live-dot { width: 6px; height: 6px; border-radius: 50%; background: #28CA41; animation: pulse-green 1.8s ease-in-out infinite; }
+    @keyframes pulse-green { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.75); } }
+    .dash-body { flex: 1; padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; overflow: hidden; min-height: 0; }
+    .dash-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; flex-shrink: 0; }
+    .dash-metric {
+      background: rgba(201,123,106,0.08);
+      border: 1px solid rgba(201,123,106,0.18);
+      border-radius: 8px; padding: 10px 10px 8px;
+    }
+    .dash-metric-val { font-size: 20px; font-weight: 800; color: #fff; line-height: 1; }
+    .dash-metric-label { font-size: 7.5px; font-weight: 600; color: rgba(255,255,255,0.38); letter-spacing: 0.07em; text-transform: uppercase; margin-top: 5px; line-height: 1.4; }
+    .dash-metric-delta { font-size: 9px; font-weight: 700; color: #28CA41; margin-top: 4px; }
+    .dash-chart-wrap { flex-shrink: 0; }
+    .dash-chart-title { font-size: 8.5px; font-weight: 700; color: rgba(255,255,255,0.28); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+    .dash-bars { display: flex; align-items: flex-end; gap: 5px; height: 56px; }
+    .dash-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
+    .dash-bar {
+      width: 100%; border-radius: 3px 3px 0 0;
+      background: linear-gradient(to top, #C97B6A, rgba(217,150,127,0.45));
+      transform-origin: bottom; transform: scaleY(0);
+      animation: bar-grow 0.9s cubic-bezier(0.34,1.4,0.64,1) forwards;
+    }
+    @keyframes bar-grow { to { transform: scaleY(1); } }
+    .dash-bar-day { font-size: 7px; color: rgba(255,255,255,0.25); letter-spacing: 0.04em; }
+    .dash-divider { height: 1px; background: rgba(255,255,255,0.05); flex-shrink: 0; }
+    .dash-feed { flex: 1; min-height: 0; overflow: hidden; }
+    .dash-feed-title {
+      font-size: 8.5px; font-weight: 700; color: rgba(255,255,255,0.28);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
+    }
+    .dash-feed-title::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.06); }
+    .dash-feed-items { display: flex; flex-direction: column; gap: 7px; }
+    .dash-feed-item { display: flex; align-items: center; gap: 8px; animation: feed-in 0.35s ease both; }
+    @keyframes feed-in { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: translateX(0); } }
+    .feed-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .feed-dot.green  { background: #28CA41; }
+    .feed-dot.terra  { background: #C97B6A; }
+    .feed-dot.yellow { background: #FFBD2E; }
+    .feed-text { font-size: 10px; color: rgba(255,255,255,0.6); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .feed-time { font-size: 9px; color: rgba(255,255,255,0.22); flex-shrink: 0; }
+
+    /* ── CLIENTS ───────────────────────────────────────────── */
+    #clients {
+      padding: 52px 0;
+      border-top: 1px solid var(--grey-200);
+      border-bottom: 1px solid var(--grey-200);
+    }
+    .clients-label {
+      font-size: 12px; font-weight: 600; color: var(--grey-400);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      text-align: center; margin-bottom: 28px;
+    }
+    .clients-logos {
+      display: flex; align-items: center; justify-content: center;
+      gap: 48px; flex-wrap: wrap;
+    }
+    .client-logo {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 14px; font-weight: 700;
+      color: var(--grey-400);
+      letter-spacing: 0.04em;
+      transition: color 0.2s;
+      white-space: nowrap;
+    }
+    .client-logo:hover { color: var(--grey-800); }
+
+    /* ── SECTION COMMONS ───────────────────────────────────── */
+    .section-header { margin-bottom: 56px; }
+    .section-header.centered { text-align: center; }
+    .section-eyebrow {
+      font-size: 12px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--teal);
+      margin-bottom: 14px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .section-eyebrow.centered { justify-content: center; }
+    .section-eyebrow::before {
+      content: ''; display: block;
+      width: 18px; height: 1.5px; background: var(--teal);
+    }
+    .section-eyebrow.centered::before { display: none; }
+    h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(28px, 3.5vw, 44px);
+      font-weight: 700; line-height: 1.18;
+      letter-spacing: -0.02em; color: var(--text);
+    }
+    h2 em { font-style: italic; color: var(--teal); }
+    .section-sub {
+      font-size: 15px; line-height: 1.7;
+      color: var(--grey-600); max-width: 500px; margin-top: 14px;
+    }
+    .section-sub.centered { margin-left: auto; margin-right: auto; text-align: center; }
+    .view-all {
+      font-size: 13px; font-weight: 700; color: var(--teal);
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: gap 0.2s;
+    }
+    .view-all:hover { gap: 10px; }
+    .view-all svg { width: 14px; height: 14px; }
+
+    /* ── PROJECTS ──────────────────────────────────────────── */
+    #projects { padding: 96px 0; background: var(--off-white); }
+    .projects-header-row {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      margin-bottom: 48px;
+    }
+    .projects-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .project-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      border: 1px solid var(--grey-200);
+      overflow: hidden;
+      transition: box-shadow 0.3s, transform 0.3s;
+      cursor: pointer;
+    }
+    .project-card:hover {
+      box-shadow: 0 16px 48px rgba(0,0,0,0.09);
+      transform: translateY(-4px);
+    }
+    .project-img {
+      width: 100%; aspect-ratio: 16/9;
+      background: var(--grey-100);
+      overflow: hidden; position: relative;
+    }
+    .project-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+    .project-card:hover .project-img img { transform: scale(1.03); }
+    .project-img-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, transparent 40%, rgba(44,26,20,0.5));
+    }
+    .project-tag {
+      position: absolute; top: 16px; left: 16px;
+      background: rgba(255,255,255,0.92);
+      font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--teal);
+      padding: 5px 12px; border-radius: 20px;
+    }
+    .project-info { padding: 24px 28px 28px; }
+    .project-name {
+      font-size: 17px; font-weight: 700; color: var(--text);
+      margin-bottom: 8px; line-height: 1.3;
+    }
+    .project-desc { font-size: 13px; color: var(--grey-600); line-height: 1.65; }
+    .project-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 20px; padding-top: 20px;
+      border-top: 1px solid var(--grey-100);
+    }
+    .project-meta { font-size: 11px; font-weight: 600; color: var(--grey-400); letter-spacing: 0.06em; text-transform: uppercase; }
+    .project-arrow {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 1.5px solid var(--grey-200);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--grey-400);
+      transition: all 0.2s;
+    }
+    .project-card:hover .project-arrow {
+      background: var(--teal); border-color: var(--teal); color: var(--white);
+    }
+
+    /* ── SERVICES ──────────────────────────────────────────── */
+    #services { padding: 96px 0; background: var(--white); }
+    .services-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+    }
+    .service-card {
+      padding: 36px 32px;
+      border-radius: var(--radius);
+      border: 1px solid var(--grey-200);
+      transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+      position: relative; overflow: hidden;
+    }
+    .service-card::before {
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--teal), var(--mid-blue));
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.3s;
+    }
+    .service-card:hover::before { transform: scaleX(1); }
+    .service-card:hover {
+      border-color: transparent;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+      transform: translateY(-4px);
+    }
+    .service-icon-wrap {
+      width: 48px; height: 48px;
+      background: rgba(201,123,106,0.12);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 24px; color: var(--teal);
+    }
+    .service-icon-wrap svg { width: 22px; height: 22px; }
+    .service-title {
+      font-size: 15px; font-weight: 700; color: var(--text);
+      margin-bottom: 10px; line-height: 1.3;
+    }
+    .service-desc { font-size: 13px; color: var(--grey-600); line-height: 1.7; }
+    .service-link {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 12px; font-weight: 700; color: var(--teal);
+      margin-top: 20px; transition: gap 0.2s;
+    }
+    .service-link:hover { gap: 9px; }
+
+    /* ── TESTIMONIALS ──────────────────────────────────────── */
+    #testimonials { padding: 96px 0; background: var(--off-white); }
+    .testimonials-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+    }
+    .testimonial-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      border: 1px solid var(--grey-200);
+      padding: 36px 32px;
+      position: relative;
+    }
+    .testimonial-quote {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 15px; line-height: 1.75; color: var(--text);
+      font-style: italic; margin-bottom: 28px;
+    }
+    .testimonial-quote::before {
+      content: '"';
+      font-size: 48px; line-height: 1;
+      color: var(--teal); opacity: 0.3;
+      font-family: 'Montserrat', sans-serif;
+      display: block; margin-bottom: 8px;
+    }
+    .testimonial-author {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .author-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--grey-100);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700; color: var(--teal);
+      flex-shrink: 0;
+    }
+    .author-name { font-size: 13px; font-weight: 700; color: var(--text); }
+    .author-role { font-size: 11px; color: var(--grey-400); margin-top: 2px; }
+
+    /* ── DARK FEATURE ──────────────────────────────────────── */
+    #feature {
+      padding: 96px 0;
+      background: var(--navy);
+    }
+    .feature-inner {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+      align-items: center;
+    }
+    .feature-text .section-eyebrow { color: var(--teal); }
+    .feature-text h2 { color: var(--white); }
+    .feature-text h2 em { color: #E8B4A4; }
+    .feature-text .section-sub { color: rgba(255,255,255,0.55); }
+    .feature-stat-row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+      margin-top: 40px;
+    }
+    .feature-stat {
+      padding: 24px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+    }
+    .feature-stat-num {
+      font-size: 36px; font-weight: 800; color: var(--white);
+      line-height: 1; margin-bottom: 6px;
+    }
+    .feature-stat-num span { color: var(--teal); }
+    .feature-stat-label { font-size: 12px; color: rgba(255,255,255,0.45); font-weight: 500; }
+    .feature-visual { position: relative; }
+    .feature-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .feature-card-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot.r { background: #FF5F57; }
+    .dot.y { background: #FFBD2E; }
+    .dot.g { background: #28CA41; }
+    .feature-card-body { padding: 28px 24px; }
+    .process-step-row {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .process-step-row:last-child { border-bottom: none; }
+    .psr-num {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: rgba(201,123,106,0.15);
+      border: 1px solid rgba(201,123,106,0.35);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 700; color: var(--teal);
+      flex-shrink: 0;
+    }
+    .psr-label { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.8); }
+    .psr-bar { flex: 1; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.06); overflow: hidden; }
+    .psr-fill { height: 100%; border-radius: 2px; background: var(--teal); }
+    .psr-pct { font-size: 11px; font-weight: 700; color: var(--teal); flex-shrink: 0; }
+
+    /* ── CTA SECTION ───────────────────────────────────────── */
+    #cta {
+      padding: 96px 0;
+      background: var(--white);
+      border-top: 1px solid var(--grey-200);
+    }
+    .cta-inner {
+      display: flex; align-items: center; justify-content: space-between; gap: 40px;
+    }
+    .cta-text h2 { font-size: clamp(28px, 3vw, 40px); }
+    .cta-text p { font-size: 15px; color: var(--grey-600); margin-top: 10px; max-width: 420px; line-height: 1.65; }
+    .cta-actions { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+
+    /* ── FOOTER ────────────────────────────────────────────── */
+    footer {
+      background: var(--navy);
+      padding: 64px 0 36px;
+    }
+    .footer-top {
+      display: grid; grid-template-columns: 1.8fr 1fr 1fr 1fr; gap: 48px;
+      margin-bottom: 48px;
+    }
+    .footer-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+    .footer-logo-text {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 17px; font-weight: 700;
+      color: rgba(255,255,255,0.9); letter-spacing: -0.01em;
+    }
+    .footer-logo-text em { font-style: normal; color: rgba(232,180,164,0.9); }
+    .footer-tagline {
+      font-size: 13px; color: rgba(255,255,255,0.4);
+      line-height: 1.7; max-width: 220px;
+    }
+    .footer-col h4 {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: rgba(255,255,255,0.35);
+      margin-bottom: 20px;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 11px; }
+    .footer-col a {
+      font-size: 13px; color: rgba(255,255,255,0.55);
+      transition: color 0.2s; font-weight: 400;
+    }
+    .footer-col a:hover { color: var(--white); }
+    .footer-bottom {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 28px; border-top: 1px solid rgba(255,255,255,0.06);
+      flex-wrap: wrap; gap: 12px;
+    }
+    .footer-copy { font-size: 12px; color: rgba(255,255,255,0.25); }
+    .footer-sub { font-size: 11px; color: rgba(255,255,255,0.2); letter-spacing: 0.08em; text-transform: uppercase; }
+
+    /* ── SCROLL REVEAL ─────────────────────────────────────── */
+    .js .reveal {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .js .reveal.up { opacity: 1; transform: translateY(0); }
+    .reveal-d1 { transition-delay: 0.08s; }
+    .reveal-d2 { transition-delay: 0.16s; }
+    .reveal-d3 { transition-delay: 0.24s; }
+    .reveal-d4 { transition-delay: 0.32s; }
+
+    /* ── BOOKING MODAL ──────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(20,10,8,0.82);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal-box {
+      background: #1C0F0B;
+      border-radius: 20px;
+      border: 1px solid rgba(201,123,106,0.14);
+      box-shadow: 0 48px 120px rgba(0,0,0,0.75), 0 0 0 1px rgba(255,255,255,0.03) inset;
+      display: flex; max-width: 800px; width: 100%;
+      max-height: 90vh; overflow: hidden; position: relative;
+      transform: translateY(20px) scale(0.96);
+      transition: transform 0.32s cubic-bezier(0.34,1.4,0.64,1);
+    }
+    .modal-overlay.open .modal-box { transform: translateY(0) scale(1); }
+    .modal-close-btn {
+      position: absolute; top: 14px; right: 14px;
+      width: 30px; height: 30px; border: none;
+      background: rgba(255,255,255,0.07); border-radius: 7px;
+      color: rgba(255,255,255,0.45); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, color 0.2s; z-index: 10;
+    }
+    .modal-close-btn:hover { background: rgba(255,255,255,0.13); color: #fff; }
+    /* Sidebar */
+    .modal-sidebar {
+      width: 210px; flex-shrink: 0;
+      background: rgba(255,255,255,0.025);
+      border-right: 1px solid rgba(255,255,255,0.06);
+      padding: 40px 28px;
+      display: flex; flex-direction: column; gap: 20px;
+    }
+    .modal-sb-icon {
+      width: 42px; height: 42px; background: var(--teal);
+      border-radius: 11px; display: flex; align-items: center; justify-content: center;
+    }
+    .modal-sb-brand { font-size: 11px; color: rgba(255,255,255,0.3); font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; }
+    .modal-sb-title { font-family: 'Montserrat', sans-serif; font-size: 19px; font-weight: 700; color: #fff; line-height: 1.3; }
+    .modal-sb-row { display: flex; align-items: center; gap: 9px; font-size: 12px; color: rgba(255,255,255,0.42); }
+    .modal-sb-row svg { flex-shrink: 0; width: 14px; height: 14px; }
+    /* Main content */
+    .modal-content { flex: 1; padding: 40px; overflow-y: auto; min-width: 0; }
+    /* Calendar */
+    .cal-header-row {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 26px;
+    }
+    .cal-month-name { font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 700; color: #fff; }
+    .cal-nav { display: flex; gap: 6px; }
+    .cal-nav-btn {
+      width: 30px; height: 30px; border: none; background: rgba(255,255,255,0.06);
+      border-radius: 7px; color: rgba(255,255,255,0.5); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s, color 0.15s;
+    }
+    .cal-nav-btn:hover { background: rgba(201,123,106,0.2); color: var(--teal); }
+    .cal-nav-btn:disabled { opacity: 0.22; cursor: not-allowed; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+    .cal-dname { text-align: center; padding-bottom: 12px; font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.22); letter-spacing: 0.09em; text-transform: uppercase; }
+    .cal-cell {
+      aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.68);
+      border-radius: 8px; border: none; background: none; cursor: pointer;
+      transition: background 0.12s, color 0.12s;
+    }
+    .cal-cell:hover:not(:disabled) { background: rgba(201,123,106,0.18); color: #fff; }
+    .cal-cell.is-today { color: var(--teal); font-weight: 700; }
+    .cal-cell.is-sel { background: var(--teal) !important; color: #fff !important; font-weight: 700; }
+    .cal-cell:disabled { color: rgba(255,255,255,0.16); cursor: not-allowed; }
+    /* Slots */
+    .slots-wrap { display: none; margin-top: 30px; padding-top: 26px; border-top: 1px solid rgba(255,255,255,0.07); }
+    .slots-wrap.show { display: block; }
+    .slots-label { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.82); margin-bottom: 14px; }
+    .slots-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+    .slot-btn {
+      padding: 10px 6px; border-radius: 8px; text-align: center;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09);
+      font-family: 'Roboto Mono', monospace; font-size: 12px; font-weight: 600;
+      color: rgba(255,255,255,0.65); cursor: pointer; transition: all 0.12s;
+    }
+    .slot-btn:hover { background: rgba(201,123,106,0.15); border-color: rgba(201,123,106,0.4); color: #fff; }
+    .slot-btn.active { background: var(--teal); border-color: var(--teal); color: #fff; }
+    /* Form */
+    .bform { display: none; margin-top: 22px; padding-top: 22px; border-top: 1px solid rgba(255,255,255,0.07); }
+    .bform.show { display: block; }
+    .bform-group { margin-bottom: 12px; }
+    .bform-group label { display: block; font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.32); letter-spacing: 0.09em; text-transform: uppercase; margin-bottom: 5px; }
+    .bform-group input {
+      width: 100%; padding: 10px 14px;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 8px; font-family: 'Roboto Mono', monospace;
+      font-size: 13px; color: #fff; outline: none; transition: border-color 0.15s;
+    }
+    .bform-group input::placeholder { color: rgba(255,255,255,0.2); }
+    .bform-group input:focus { border-color: rgba(201,123,106,0.5); }
+    .bform-submit {
+      width: 100%; padding: 13px; margin-top: 6px;
+      background: var(--teal); border: none; border-radius: 9px;
+      font-family: 'Roboto Mono', monospace; font-size: 13px; font-weight: 700;
+      color: #fff; cursor: pointer; transition: background 0.15s, transform 0.1s;
+    }
+    .bform-submit:hover { background: var(--teal-dark); transform: translateY(-1px); }
+    /* Success */
+    .bsuccess { display: none; text-align: center; padding: 36px 0; }
+    .bsuccess.show { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+    .bsuccess-check {
+      width: 54px; height: 54px;
+      background: rgba(201,123,106,0.12); border: 1.5px solid var(--teal);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      color: var(--teal);
+    }
+    .bsuccess-h { font-family: 'Montserrat', sans-serif; font-size: 19px; font-weight: 700; color: #fff; }
+    .bsuccess-p { font-size: 13px; color: rgba(255,255,255,0.42); line-height: 1.7; max-width: 270px; }
+    @media (max-width: 640px) {
+      .modal-sidebar { display: none; }
+      .modal-content { padding: 28px 22px; }
+      .slots-grid { grid-template-columns: repeat(2,1fr); }
+    }
+
+    /* ── RESPONSIVE ────────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .hero-inner { grid-template-columns: 1fr; gap: 48px; }
+      .hero-visual { display: none; }
+      .feature-inner { grid-template-columns: 1fr; }
+      .services-grid { grid-template-columns: 1fr 1fr; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      .container { padding: 0 24px; }
+      #hero { padding: 110px 0 72px; }
+      .nav-links, .btn-nav-desktop { display: none; }
+      .nav-links.open {
+        display: flex; flex-direction: column;
+        position: fixed; top: 68px; left: 0; right: 0;
+        background: var(--white);
+        padding: 24px;
+        border-bottom: 1px solid var(--grey-200);
+        gap: 16px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+      }
+      .nav-toggle { display: flex; }
+      .projects-grid { grid-template-columns: 1fr; }
+      .services-grid { grid-template-columns: 1fr; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .cta-inner { flex-direction: column; text-align: center; }
+      .cta-text p { margin-left: auto; margin-right: auto; }
+      .footer-top { grid-template-columns: 1fr; }
+      .section-header.split { flex-direction: column; }
+      .projects-header-row { flex-direction: column; gap: 16px; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ──────────────────────────────────────────────────── -->
+<nav id="navbar">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">
+        <svg width="28" height="26" viewBox="0 0 28 26" fill="none" aria-hidden="true">
+          <polygon points="14,1 27,24 1,24" fill="var(--teal)" opacity="0.18"/>
+          <polygon points="14,1 27,24 1,24" fill="none" stroke="var(--teal)" stroke-width="1.5" stroke-linejoin="round"/>
+          <polygon points="7.5,24 14,11 20.5,24" fill="var(--teal)" opacity="0.55"/>
+        </svg>
+        <span class="nav-logo-text">offpiste <em>AI</em></span>
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#projects">Work</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#testimonials">Clients</a></li>
+        <li><a href="#feature">About</a></li>
+        <li><a href="#cta">Contact</a></li>
+      </ul>
+      <a href="#" data-book class="btn btn-primary btn-nav-desktop">Hire Us</a>
+      <div class="nav-toggle" id="nav-toggle"><span></span><span></span><span></span></div>
+    </div>
+  </div>
+</nav>
+
+<!-- ── HERO ─────────────────────────────────────────────────── -->
+<section id="hero">
+  <div class="hero-bg-paths" aria-hidden="true">
+    <svg id="bg-paths-pos" class="bg-paths-svg" viewBox="0 0 696 316" fill="none" preserveAspectRatio="none"></svg>
+    <svg id="bg-paths-neg" class="bg-paths-svg" viewBox="0 0 696 316" fill="none" preserveAspectRatio="none"></svg>
+  </div>
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <div class="hero-label"><span></span>AI Strategy Consulting</div>
+        <h1>Crafting AI strategies that drive <em>real outcomes</em></h1>
+        <p class="hero-sub">
+          We build AI systems that stop small businesses losing money to missed calls, no-shows, and manual processes — with clear ROI from day one.
+        </p>
+        <div class="hero-ctas">
+          <a href="#" data-book class="btn btn-primary" style="padding:13px 28px;font-size:14px;">Let's meet</a>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="hero-card-main">
+          <div class="dashboard">
+            <div class="dash-header">
+              <div class="dash-dots">
+                <div class="dash-dot r"></div>
+                <div class="dash-dot y"></div>
+                <div class="dash-dot g"></div>
+              </div>
+              <div class="dash-title">AI Operations</div>
+              <div class="dash-live"><div class="dash-live-dot"></div>LIVE</div>
+            </div>
+            <div class="dash-body">
+              <div class="dash-metrics">
+                <div class="dash-metric">
+                  <div class="dash-metric-val" data-count="247">0</div>
+                  <div class="dash-metric-label">Calls handled</div>
+                  <div class="dash-metric-delta">↑ today</div>
+                </div>
+                <div class="dash-metric">
+                  <div class="dash-metric-val" data-count="89">0</div>
+                  <div class="dash-metric-label">Bookings made</div>
+                  <div class="dash-metric-delta">↑ today</div>
+                </div>
+                <div class="dash-metric">
+                  <div class="dash-metric-val" data-count="12">0</div>
+                  <div class="dash-metric-label">Slots recovered</div>
+                  <div class="dash-metric-delta">↑ today</div>
+                </div>
+              </div>
+              <div class="dash-chart-wrap">
+                <div class="dash-chart-title">Weekly call volume</div>
+                <div class="dash-bars">
+                  <div class="dash-bar-col"><div class="dash-bar" style="height:55%;animation-delay:0.05s"></div><div class="dash-bar-day">MON</div></div>
+                  <div class="dash-bar-col"><div class="dash-bar" style="height:72%;animation-delay:0.12s"></div><div class="dash-bar-day">TUE</div></div>
+                  <div class="dash-bar-col"><div class="dash-bar" style="height:48%;animation-delay:0.19s"></div><div class="dash-bar-day">WED</div></div>
+                  <div class="dash-bar-col"><div class="dash-bar" style="height:88%;animation-delay:0.26s"></div><div class="dash-bar-day">THU</div></div>
+                  <div class="dash-bar-col"><div class="dash-bar" style="height:66%;animation-delay:0.33s"></div><div class="dash-bar-day">FRI</div></div>
+                  <div class="dash-bar-col"><div class="dash-bar" style="height:38%;animation-delay:0.40s"></div><div class="dash-bar-day">SAT</div></div>
+                  <div class="dash-bar-col"><div class="dash-bar" style="height:80%;animation-delay:0.47s"></div><div class="dash-bar-day">SUN</div></div>
+                </div>
+              </div>
+              <div class="dash-divider"></div>
+              <div class="dash-feed">
+                <div class="dash-feed-title">Live activity</div>
+                <div class="dash-feed-items" id="dash-feed">
+                  <div class="dash-feed-item"><div class="feed-dot green"></div><div class="feed-text">Call answered → appointment booked</div><div class="feed-time">2s ago</div></div>
+                  <div class="dash-feed-item" style="animation-delay:0.1s"><div class="feed-dot terra"></div><div class="feed-text">Follow-up sequence triggered</div><div class="feed-time">9s ago</div></div>
+                  <div class="dash-feed-item" style="animation-delay:0.2s"><div class="feed-dot yellow"></div><div class="feed-text">Cancelled slot filled from waitlist</div><div class="feed-time">15s ago</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-card-float">
+          <div class="float-label">Lost to missed calls / yr</div>
+          <div class="float-val">£100k+</div>
+          <div class="float-sub">avg. SMB revenue lost</div>
+        </div>
+        <div class="hero-card-float2">
+          <div class="float2-label">Lost to no-shows / yr</div>
+          <div class="float2-val">£150k+</div>
+          <div class="float2-bar">
+            <span class="active"></span>
+            <span class="active"></span>
+            <span class="active"></span>
+            <span class="active"></span>
+            <span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── HOW IT WORKS ───────────────────────────────────────────── -->
+<section id="projects">
+  <div class="container">
+    <div class="projects-header-row">
+      <div>
+        <div class="section-eyebrow">How it works</div>
+        <h2>From audit to automation <em>in weeks.</em></h2>
+      </div>
+    </div>
+
+    <div class="projects-grid" style="grid-template-columns: repeat(3, 1fr);">
+      <div class="project-card reveal">
+        <div class="project-info" style="padding:36px 32px;">
+          <span class="project-tag" style="position:static;display:inline-block;margin-bottom:20px;">01 — DISCOVER</span>
+          <div class="project-name">Free AI Audit</div>
+          <p class="project-desc">We map your workflows, find the bottlenecks, and identify exactly where you're losing time and money. You get a prioritised automation roadmap with clear ROI projections.</p>
+          <div class="project-footer">
+            <a href="#" data-book class="service-link" style="margin-top:0;">Book your free audit <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6h8M6 2l4 4-4 4"/></svg></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-card reveal reveal-d1">
+        <div class="project-info" style="padding:36px 32px;">
+          <span class="project-tag" style="position:static;display:inline-block;margin-bottom:20px;">02 — BUILD</span>
+          <div class="project-name">Custom Implementation</div>
+          <p class="project-desc">We build and deploy your AI systems — voice agents, automated follow-ups, smart scheduling — scoped tight and delivered in weeks, not months.</p>
+          <div class="project-footer">
+            <a href="#services" class="service-link" style="margin-top:0;">See our services <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6h8M6 2l4 4-4 4"/></svg></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-card reveal reveal-d2">
+        <div class="project-info" style="padding:36px 32px;">
+          <span class="project-tag" style="position:static;display:inline-block;margin-bottom:20px;">03 — GROW</span>
+          <div class="project-name">Optimise & Expand</div>
+          <p class="project-desc">Once a system proves ROI, we expand coverage across your operations. Every upsell is earned, never pushed.</p>
+          <div class="project-footer">
+            <a href="#" data-book class="service-link" style="margin-top:0;">Get started <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6h8M6 2l4 4-4 4"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SERVICES ──────────────────────────────────────────────── -->
+<section id="services">
+  <div class="container">
+    <div class="section-header" style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:48px;">
+      <div>
+        <div class="section-eyebrow">What we offer</div>
+        <h2>Our <em>services.</em></h2>
+      </div>
+      <p class="section-sub" style="margin-top:0;max-width:360px;">
+        From strategy to execution, we cover every stage of your AI journey.
+      </p>
+    </div>
+
+    <div class="services-grid">
+      <div class="service-card reveal">
+        <div class="service-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 3l18 18M12 3C7 3 3 7 3 12s4 9 9 9 9-4 9-9"/>
+            <path d="M3 12h9m0-9v9"/>
+          </svg>
+        </div>
+        <div class="service-title">AI Strategy & Roadmapping</div>
+        <p class="service-desc">Define your AI vision with a clear, prioritized roadmap aligned to your business goals and existing capabilities.</p>
+        <a href="#cta" class="service-link">Learn more <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6h8M6 2l4 4-4 4"/></svg></a>
+      </div>
+
+      <div class="service-card reveal reveal-d1">
+        <div class="service-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/>
+            <rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/>
+          </svg>
+        </div>
+        <div class="service-title">Implementation & Integration</div>
+        <p class="service-desc">We build and deploy AI systems that plug into your existing tools and workflows — no rip-and-replace, no disruption.</p>
+        <a href="#cta" class="service-link">Learn more <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6h8M6 2l4 4-4 4"/></svg></a>
+      </div>
+
+      <div class="service-card reveal reveal-d2">
+        <div class="service-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>
+            <path d="M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/>
+          </svg>
+        </div>
+        <div class="service-title">Process Automation</div>
+        <p class="service-desc">Automate repetitive tasks — appointment booking, follow-ups, data entry, client communications — so your team focuses on what matters.</p>
+        <a href="#cta" class="service-link">Learn more <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6h8M6 2l4 4-4 4"/></svg></a>
+      </div>
+
+      <div class="service-card reveal reveal-d1">
+        <div class="service-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 20h18M6 20V10l6-7 6 7v10"/><path d="M9 20v-5h6v5"/>
+          </svg>
+        </div>
+        <div class="service-title">AI Voice Agents</div>
+        <p class="service-desc">AI-powered phone agents that answer calls, book appointments, handle FAQs, and route complex enquiries to your team. 24/7, no missed calls.</p>
+        <a href="#cta" class="service-link">Learn more <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6h8M6 2l4 4-4 4"/></svg></a>
+      </div>
+
+      <div class="service-card reveal reveal-d2">
+        <div class="service-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <div class="service-title">Cancellation & No-Show Recovery</div>
+        <p class="service-desc">Automated systems that instantly fill cancelled slots from your waitlist — no manual calls, no empty chairs, no lost revenue.</p>
+        <a href="#cta" class="service-link">Learn more <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6h8M6 2l4 4-4 4"/></svg></a>
+      </div>
+
+      <div class="service-card reveal reveal-d3">
+        <div class="service-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+          </svg>
+        </div>
+        <div class="service-title">Client Follow-Up Systems</div>
+        <p class="service-desc">Automated follow-up sequences that re-engage clients who didn't commit — personalised messages that bring them back without manual chasing.</p>
+        <a href="#cta" class="service-link">Learn more <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6h8M6 2l4 4-4 4"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── BUILT FOR ───────────────────────────────────────────────── -->
+<section id="testimonials">
+  <div class="container">
+    <div class="section-header centered">
+      <div class="section-eyebrow centered">Who we help</div>
+      <h2>Built for businesses <em>like yours</em></h2>
+    </div>
+
+    <div class="testimonials-grid" style="grid-template-columns: repeat(2, 1fr);">
+      <div class="testimonial-card reveal">
+        <div class="testimonial-quote" style="font-style:normal;font-size:16px;font-weight:700;margin-bottom:12px;">Healthcare & Dental</div>
+        <p style="font-size:14px;color:var(--grey-600);line-height:1.7;">Recover lost patients, fill cancelled appointments, and free up your front desk.</p>
+      </div>
+
+      <div class="testimonial-card reveal reveal-d1">
+        <div class="testimonial-quote" style="font-style:normal;font-size:16px;font-weight:700;margin-bottom:12px;">Hospitality & Catering</div>
+        <p style="font-size:14px;color:var(--grey-600);line-height:1.7;">Automate enquiries, bookings, and follow-ups so you never miss a lead.</p>
+      </div>
+
+      <div class="testimonial-card reveal reveal-d2">
+        <div class="testimonial-quote" style="font-style:normal;font-size:16px;font-weight:700;margin-bottom:12px;">Professional Services</div>
+        <p style="font-size:14px;color:var(--grey-600);line-height:1.7;">Streamline client intake, scheduling, and communications.</p>
+      </div>
+
+      <div class="testimonial-card reveal reveal-d3">
+        <div class="testimonial-quote" style="font-style:normal;font-size:16px;font-weight:700;margin-bottom:12px;">Local Service Businesses</div>
+        <p style="font-size:14px;color:var(--grey-600);line-height:1.7;">Answer every call, book every job, follow up on every quote.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── DARK FEATURE ───────────────────────────────────────────── -->
+<section id="feature">
+  <div class="container">
+    <div class="feature-inner">
+      <div class="feature-text reveal">
+        <div class="section-eyebrow">Why offpiste AI</div>
+        <h2>Strategy rooted in <em>results</em></h2>
+        <p class="section-sub">
+          Most small businesses are losing thousands every month to missed calls, no-shows, and clients who never come back. We build AI systems that close those gaps — and you see the ROI before we ever upsell.
+        </p>
+        <div class="feature-stat-row">
+          <div class="feature-stat">
+            <div class="feature-stat-num">85<span>%</span></div>
+            <div class="feature-stat-label">of callers won't call back if you don't answer</div>
+          </div>
+          <div class="feature-stat">
+            <div class="feature-stat-num">£100<span>k+</span></div>
+            <div class="feature-stat-label">lost per year by SMBs to missed calls alone</div>
+          </div>
+          <div class="feature-stat">
+            <div class="feature-stat-num">50<span>%</span></div>
+            <div class="feature-stat-label">of treatments declined without proper follow-up</div>
+          </div>
+          <div class="feature-stat">
+            <div class="feature-stat-num">15<span>%</span></div>
+            <div class="feature-stat-label">of appointments lost to no-shows & cancellations</div>
+          </div>
+        </div>
+        <a href="#cta" class="btn btn-primary" style="margin-top:36px;padding:13px 28px;font-size:14px;">Work with us</a>
+      </div>
+
+      <div class="feature-visual reveal reveal-d2">
+        <div class="feature-card">
+          <div class="feature-card-header">
+            <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+            <span style="font-size:12px;color:rgba(255,255,255,0.3);margin-left:8px;font-family:'Roboto Mono',monospace;">engagement-progress.ai</span>
+          </div>
+          <div class="feature-card-body">
+            <div style="font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:20px;font-weight:600;">Active Engagements</div>
+            <div class="process-step-row">
+              <div class="psr-num">01</div>
+              <div class="psr-label">Discovery & Audit</div>
+              <div class="psr-bar"><div class="psr-fill" style="width:100%"></div></div>
+              <div class="psr-pct">Done</div>
+            </div>
+            <div class="process-step-row">
+              <div class="psr-num">02</div>
+              <div class="psr-label">AI Roadmap</div>
+              <div class="psr-bar"><div class="psr-fill" style="width:100%"></div></div>
+              <div class="psr-pct">Done</div>
+            </div>
+            <div class="process-step-row">
+              <div class="psr-num">03</div>
+              <div class="psr-label">Implementation</div>
+              <div class="psr-bar"><div class="psr-fill" style="width:72%"></div></div>
+              <div class="psr-pct">72%</div>
+            </div>
+            <div class="process-step-row">
+              <div class="psr-num">04</div>
+              <div class="psr-label">Scale & Optimise</div>
+              <div class="psr-bar"><div class="psr-fill" style="width:18%"></div></div>
+              <div class="psr-pct">18%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ───────────────────────────────────────────────────── -->
+<section id="cta">
+  <div class="container">
+    <div class="cta-inner">
+      <div class="cta-text reveal">
+        <h2>Interested to collaborate?<br><em>Let's connect.</em></h2>
+        <p>Book a free AI audit. We'll map your workflows, find where you're losing money, and show you exactly what AI can fix — with real numbers. No obligation.</p>
+      </div>
+      <div class="cta-actions reveal reveal-d2">
+        <a href="#" data-book class="btn btn-primary" style="padding:14px 32px;font-size:14px;">Request Consultation</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ────────────────────────────────────────────────── -->
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="#" class="footer-logo">
+          <svg width="26" height="24" viewBox="0 0 28 26" fill="none" aria-hidden="true">
+            <polygon points="14,1 27,24 1,24" fill="rgba(255,255,255,0.12)"/>
+            <polygon points="14,1 27,24 1,24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5" stroke-linejoin="round"/>
+            <polygon points="7.5,24 14,11 20.5,24" fill="rgba(255,255,255,0.5)"/>
+          </svg>
+          <span class="footer-logo-text">offpiste <em>AI</em></span>
+        </a>
+        <p class="footer-tagline">Crafting AI strategies that drive real business outcomes — ethically, globally, reliably.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#services">AI Strategy</a></li>
+          <li><a href="#services">Implementation</a></li>
+          <li><a href="#services">Process Automation</a></li>
+          <li><a href="#services">AI Voice Agents</a></li>
+          <li><a href="#services">No-Show Recovery</a></li>
+          <li><a href="#services">Follow-Up Systems</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#feature">About</a></li>
+          <li><a href="#projects">Work</a></li>
+          <li><a href="#testimonials">Clients</a></li>
+          <li><a href="#cta">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:Hello@offpisteai.com">Hello@offpisteai.com</a></li>
+          <li><a href="https://www.linkedin.com/company/off-piste-ai/" target="_blank" rel="noopener">LinkedIn</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2026 offpiste AI. All rights reserved.</span>
+      <span class="footer-sub">Strategic Insight · Ethical Practices</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* Mark JS active for reveal animations */
+  document.documentElement.classList.add('js');
+
+  /* Nav scroll */
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 20);
+  }, { passive: true });
+
+  /* Mobile nav */
+  const toggle = document.getElementById('nav-toggle');
+  const navLinks = document.getElementById('nav-links');
+  toggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+
+  /* Scroll reveal */
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('up'); io.unobserve(e.target); } });
+  }, { threshold: 0.05, rootMargin: '0px 0px 0px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  /* Immediately reveal anything already in viewport */
+  setTimeout(() => {
+    document.querySelectorAll('.reveal:not(.up)').forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight + 200) el.classList.add('up');
+    });
+  }, 100);
+
+  /* ── Dashboard counter animation ── */
+  document.querySelectorAll('[data-count]').forEach(el => {
+    const target = parseInt(el.dataset.count);
+    const duration = 1400;
+    const start = performance.now();
+    function update(now) {
+      const p = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(ease * target);
+      if (p < 1) requestAnimationFrame(update);
+    }
+    setTimeout(() => requestAnimationFrame(update), 400);
+  });
+
+  /* ── Dashboard live feed rotation ── */
+  const feedEvents = [
+    { dot: 'green',  text: 'Call answered → appointment booked' },
+    { dot: 'terra',  text: 'Follow-up sequence triggered' },
+    { dot: 'yellow', text: 'Cancelled slot filled from waitlist' },
+    { dot: 'green',  text: 'No-show reminder sent × 3 clients' },
+    { dot: 'terra',  text: 'AI voice agent handled enquiry' },
+    { dot: 'green',  text: 'New booking: Dental appt confirmed' },
+    { dot: 'yellow', text: 'Quote follow-up auto-sent' },
+    { dot: 'green',  text: 'Missed call → callback scheduled' },
+  ];
+  let feedIdx = 3;
+  const feedEl = document.getElementById('dash-feed');
+  if (feedEl) {
+    setInterval(() => {
+      const ev = feedEvents[feedIdx % feedEvents.length];
+      feedIdx++;
+      feedEl.querySelectorAll('.feed-time').forEach((t, i) => {
+        t.textContent = [10, 18][i] ? [10, 18][i] + 's ago' : '24s ago';
+      });
+      const div = document.createElement('div');
+      div.className = 'dash-feed-item';
+      div.innerHTML = `<div class="feed-dot ${ev.dot}"></div><div class="feed-text">${ev.text}</div><div class="feed-time">just now</div>`;
+      feedEl.insertBefore(div, feedEl.firstChild);
+      while (feedEl.children.length > 3) feedEl.removeChild(feedEl.lastChild);
+    }, 3000);
+  }
+</script>
+
+<!-- ── BACKGROUND PATHS ANIMATION ──────────────────────────── -->
+<script>
+(function() {
+  const svgNS = 'http://www.w3.org/2000/svg';
+
+  function buildPaths(svgId, position) {
+    const svg = document.getElementById(svgId);
+    if (!svg) return;
+
+    const pathEls = [];
+    for (let i = 0; i < 36; i++) {
+      const px = 380 - i * 5 * position;
+      const py = 189 + i * 6;
+      const qx = 312 - i * 5 * position;
+      const qy = 216 - i * 6;
+      const rx = 152 - i * 5 * position;
+      const ry = 343 - i * 6;
+      const sx = 616 - i * 5 * position;
+      const sy = 470 - i * 6;
+      const ex = 684 - i * 5 * position;
+      const ey = 875 - i * 6;
+
+      const d = `M-${px} -${py}C-${px} -${py} -${qx} ${qy} ${rx} ${ry}C${sx} ${sy} ${ex} ${ey} ${ex} ${ey}`;
+
+      const path = document.createElementNS(svgNS, 'path');
+      path.setAttribute('d', d);
+      path.setAttribute('stroke', '#C97B6A');
+      path.setAttribute('stroke-width', String(0.5 + i * 0.03));
+      // strokeOpacity mirrors original: 0.1 + i * 0.03
+      path.setAttribute('stroke-opacity', String(Math.min(1, 0.1 + i * 0.03)));
+      svg.appendChild(path);
+      pathEls.push({ el: path, baseOpacity: 0.6 });
+    }
+
+    // Animate after insertion — replicates framer-motion pathLength + pathOffset + opacity
+    pathEls.forEach(({ el, baseOpacity }) => {
+      let L;
+      try { L = el.getTotalLength(); } catch(e) { L = 1500; }
+
+      const duration = (20 + Math.random() * 10) * 1000;
+      const delay    = -Math.random() * duration;
+
+      // framer-motion mapping:
+      //   pathLength  0.3 → 1      → stroke-dasharray first value  (fraction * L)
+      //   pathOffset  0   → 1 → 0  → stroke-dashoffset              (-pathOffset * L)
+      //   opacity     0.3 → 0.6 → 0.3
+      // stroke-dasharray = `${pathLength * L} ${L}`
+      // stroke-dashoffset = -pathOffset * L
+      el.animate(
+        [
+          // t=0  : pathLength=0.3, pathOffset=0,   opacity 0.3
+          { strokeDasharray: `${0.3 * L} ${L}`, strokeDashoffset: '0',       opacity: 0.3 },
+          // t=0.5: pathLength=0.65, pathOffset=1,  opacity 0.6 (segment at end)
+          { strokeDasharray: `${0.65 * L} ${L}`, strokeDashoffset: `${-L}`,  opacity: 0.6 },
+          // t=1  : pathLength=1,   pathOffset=0,   opacity 0.3 (full path)
+          { strokeDasharray: `${L} ${L}`,         strokeDashoffset: '0',      opacity: 0.3 },
+        ],
+        { duration, iterations: Infinity, easing: 'linear', delay, fill: 'both' }
+      );
+    });
+  }
+
+  buildPaths('bg-paths-pos',  1);
+  buildPaths('bg-paths-neg', -1);
+})();
+</script>
+<!-- ── BOOKING MODAL ─────────────────────────────────────────── -->
+<div class="modal-overlay" id="bookingOverlay" role="dialog" aria-modal="true" aria-label="Book a meeting">
+  <div class="modal-box">
+    <button class="modal-close-btn" id="modalCloseBtn" aria-label="Close">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 1l10 10M11 1L1 11"/></svg>
+    </button>
+
+    <!-- Sidebar -->
+    <div class="modal-sidebar">
+      <div class="modal-sb-icon">
+        <svg width="18" height="16" viewBox="0 0 28 26" fill="none">
+          <polygon points="14,1 27,24 1,24" fill="rgba(255,255,255,0.18)"/>
+          <polygon points="14,1 27,24 1,24" fill="none" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>
+          <polygon points="7.5,24 14,11 20.5,24" fill="rgba(255,255,255,0.7)"/>
+        </svg>
+      </div>
+      <div class="modal-sb-brand">offpiste AI</div>
+      <div class="modal-sb-title">Book a Consultation</div>
+      <div class="modal-sb-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        30 minutes
+      </div>
+      <div class="modal-sb-row">
+        <svg viewBox="0 0 64 64" width="14" height="14"><rect width="64" height="64" rx="10" fill="#fff"/><path d="M8 20h32v24H8z" fill="#4285F4"/><path d="M40 20l16 12-16 12z" fill="#34A853"/><circle cx="24" cy="32" r="7" fill="#fff"/></svg>
+        Google Meet
+      </div>
+      <div class="modal-sb-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
+        <span id="modalTz">Your timezone</span>
+      </div>
+    </div>
+
+    <!-- Main -->
+    <div class="modal-content">
+      <div style="margin-bottom:28px;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--teal);margin-bottom:8px;">Get Started</div>
+        <div style="font-family:'Montserrat',sans-serif;font-size:22px;font-weight:700;color:#fff;line-height:1.2;">Book a Consultation</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.38);margin-top:6px;line-height:1.6;">Select a date and time that works for you.</div>
+      </div>
+      <div id="calView">
+        <div class="cal-header-row">
+          <span class="cal-month-name" id="calMonthName"></span>
+          <div class="cal-nav">
+            <button class="cal-nav-btn" id="calPrev"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 2L4 6l4 4"/></svg></button>
+            <button class="cal-nav-btn" id="calNext"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg></button>
+          </div>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+      </div>
+
+      <div class="slots-wrap" id="slotsWrap">
+        <div class="slots-label" id="slotsLabel"></div>
+        <div class="slots-grid" id="slotsGrid"></div>
+        <div class="bform" id="bform">
+          <div class="bform-group">
+            <label>Your name</label>
+            <input type="text" id="bName" placeholder="Jane Smith" />
+          </div>
+          <div class="bform-group">
+            <label>Email address</label>
+            <input type="email" id="bEmail" placeholder="jane@company.com" />
+          </div>
+          <button class="bform-submit" id="bSubmit">Confirm Google Meet booking →</button>
+        </div>
+        <div class="bsuccess" id="bSuccess">
+          <div class="bsuccess-check">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+          </div>
+          <div class="bsuccess-h">You're all set!</div>
+          <div class="bsuccess-p">Your request has been sent. We'll email you a Google Meet link to confirm your slot.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const overlay  = document.getElementById('bookingOverlay');
+  const closeBtn = document.getElementById('modalCloseBtn');
+  const monthEl  = document.getElementById('calMonthName');
+  const grid     = document.getElementById('calGrid');
+  const prevBtn  = document.getElementById('calPrev');
+  const nextBtn  = document.getElementById('calNext');
+  const slotsWrap  = document.getElementById('slotsWrap');
+  const slotsLabel = document.getElementById('slotsLabel');
+  const slotsGrid  = document.getElementById('slotsGrid');
+  const bform      = document.getElementById('bform');
+  const bSubmit    = document.getElementById('bSubmit');
+  const bSuccess   = document.getElementById('bSuccess');
+  const tzEl       = document.getElementById('modalTz');
+
+  tzEl.textContent = 'London (GMT/BST)';
+
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const DNAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const TIMES  = ['9:00 AM','9:30 AM','10:00 AM','10:30 AM','11:00 AM','11:30 AM',
+                  '1:00 PM','1:30 PM','2:00 PM','2:30 PM','3:00 PM','3:30 PM','4:00 PM','4:30 PM'];
+
+  const now = new Date();
+  let vYear = now.getFullYear(), vMonth = now.getMonth();
+  let selDate = null, selTime = null;
+
+  function openModal() {
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    renderCal();
+  }
+  function closeModal() {
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+  closeBtn.addEventListener('click', closeModal);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+  document.querySelectorAll('[data-book]').forEach(el => {
+    el.addEventListener('click', e => { e.preventDefault(); openModal(); });
+  });
+
+  function renderCal() {
+    monthEl.textContent = `${MONTHS[vMonth]} ${vYear}`;
+    prevBtn.disabled = vYear === now.getFullYear() && vMonth === now.getMonth();
+    grid.innerHTML = '';
+    DNAMES.forEach(d => {
+      const el = document.createElement('div');
+      el.className = 'cal-dname'; el.textContent = d; grid.appendChild(el);
+    });
+    const firstDay = new Date(vYear, vMonth, 1).getDay();
+    const total    = new Date(vYear, vMonth + 1, 0).getDate();
+    const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    for (let i = 0; i < firstDay; i++) {
+      const el = document.createElement('button');
+      el.className = 'cal-cell'; el.disabled = true; grid.appendChild(el);
+    }
+    for (let d = 1; d <= total; d++) {
+      const btn = document.createElement('button');
+      btn.className = 'cal-cell'; btn.textContent = d;
+      const dt = new Date(vYear, vMonth, d);
+      const past = dt < todayMidnight;
+      const weekend = dt.getDay() === 0 || dt.getDay() === 6;
+      if (past || weekend) {
+        btn.disabled = true;
+      } else {
+        if (dt.getTime() === todayMidnight.getTime()) btn.classList.add('is-today');
+        if (selDate && selDate.y === vYear && selDate.m === vMonth && selDate.d === d) btn.classList.add('is-sel');
+        btn.addEventListener('click', () => pickDate(d));
+      }
+      grid.appendChild(btn);
+    }
+  }
+
+  function pickDate(d) {
+    selDate = { y: vYear, m: vMonth, d };
+    selTime = null;
+    renderCal();
+    const dt = new Date(vYear, vMonth, d);
+    slotsLabel.textContent = dt.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+    slotsGrid.innerHTML = '';
+    bform.classList.remove('show');
+    bSuccess.classList.remove('show');
+    slotsWrap.classList.add('show');
+    TIMES.forEach(t => {
+      const btn = document.createElement('button');
+      btn.className = 'slot-btn'; btn.textContent = t;
+      btn.addEventListener('click', () => pickTime(t, btn));
+      slotsGrid.appendChild(btn);
+    });
+  }
+
+  function pickTime(t, btn) {
+    selTime = t;
+    slotsGrid.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    bform.classList.add('show');
+    bSuccess.classList.remove('show');
+  }
+
+  prevBtn.addEventListener('click', () => { if (vMonth === 0) { vMonth = 11; vYear--; } else vMonth--; renderCal(); });
+  nextBtn.addEventListener('click', () => { if (vMonth === 11) { vMonth = 0; vYear++; } else vMonth++; renderCal(); });
+
+  bSubmit.addEventListener('click', () => {
+    const name  = document.getElementById('bName').value.trim();
+    const email = document.getElementById('bEmail').value.trim();
+    if (!name || !email || !selDate || !selTime) {
+      bSubmit.style.background = 'var(--teal-dark)';
+      setTimeout(() => bSubmit.style.background = '', 400);
+      return;
+    }
+
+    const pad = n => String(n).padStart(2,'0');
+    function parseHHMM(str) {
+      const [time, period] = str.split(' ');
+      let [h, m] = time.split(':').map(Number);
+      if (period === 'PM' && h !== 12) h += 12;
+      if (period === 'AM' && h === 12) h = 0;
+      return { h, m };
+    }
+    const { h, m } = parseHHMM(selTime);
+    const endM = (m + 30) % 60, endH = m + 30 >= 60 ? h + 1 : h;
+    const ds = `${selDate.y}${pad(selDate.m+1)}${pad(selDate.d)}`;
+    const startDT = `${ds}T${pad(h)}${pad(m)}00`, endDT = `${ds}T${pad(endH)}${pad(endM)}00`;
+
+    const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE` +
+      `&text=${encodeURIComponent('30 Min Call with offpiste AI')}` +
+      `&details=${encodeURIComponent('Google Meet link will be sent by offpiste AI.\n\nRequested by: ' + name)}` +
+      `&dates=${startDT}/${endDT}` +
+      `&add=${encodeURIComponent('Hello@offpisteai.com')}` +
+      `&ctz=Europe%2FLondon`;
+
+    const dateStr = new Date(selDate.y, selDate.m, selDate.d)
+      .toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+    const subject = encodeURIComponent(`Meeting Request — ${name}`);
+    const body    = encodeURIComponent(`Hi offpiste AI,\n\nI'd like to book a 30-minute Google Meet.\n\nName: ${name}\nEmail: ${email}\nDate: ${dateStr}\nTime: ${selTime}\n\nLooking forward to connecting!`);
+
+    window.open(gcalUrl, '_blank');
+    window.location.href = `mailto:Hello@offpisteai.com?subject=${subject}&body=${body}`;
+
+    bform.classList.remove('show');
+    bSuccess.classList.add('show');
+  });
+})();
+</script>
+</body>
+</html>
