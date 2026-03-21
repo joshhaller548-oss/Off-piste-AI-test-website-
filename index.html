@@ -743,36 +743,98 @@
     }
 
     /* ── RESPONSIVE ────────────────────────────────────────── */
+    .howitworks-grid { grid-template-columns: repeat(3, 1fr); }
+
     @media (max-width: 1024px) {
       .hero-inner { grid-template-columns: 1fr; gap: 48px; }
       .hero-visual { display: none; }
       .feature-inner { grid-template-columns: 1fr; }
       .services-grid { grid-template-columns: 1fr 1fr; }
-      .testimonials-grid { grid-template-columns: 1fr; }
+      .testimonials-grid { grid-template-columns: 1fr 1fr; }
+      .howitworks-grid { grid-template-columns: 1fr; }
       .footer-top { grid-template-columns: 1fr 1fr; }
     }
+
     @media (max-width: 768px) {
-      .container { padding: 0 24px; }
-      #hero { padding: 110px 0 72px; }
+      /* Layout */
+      .container { padding: 0 20px; }
+
+      /* Nav */
+      .nav-inner { height: 60px; }
       .nav-links, .btn-nav-desktop { display: none; }
       .nav-links.open {
         display: flex; flex-direction: column;
-        position: fixed; top: 68px; left: 0; right: 0;
+        position: fixed; top: 60px; left: 0; right: 0;
         background: var(--white);
-        padding: 24px;
+        padding: 20px;
         border-bottom: 1px solid var(--grey-200);
-        gap: 16px;
+        gap: 14px;
         box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+        z-index: 99;
       }
+      .nav-links a { font-size: 15px; }
       .nav-toggle { display: flex; }
-      .projects-grid { grid-template-columns: 1fr; }
-      .services-grid { grid-template-columns: 1fr; }
-      .testimonials-grid { grid-template-columns: 1fr; }
-      .cta-inner { flex-direction: column; text-align: center; }
+
+      /* Hero */
+      #hero { padding: 88px 0 52px; }
+      h1 { font-size: clamp(28px, 7.5vw, 38px); letter-spacing: -0.02em; line-height: 1.18; }
+      .hero-label { font-size: 11px; margin-bottom: 16px; }
+      .hero-sub { font-size: 14px; line-height: 1.7; margin-bottom: 28px; }
+      .hero-ctas { flex-direction: column; align-items: stretch; gap: 10px; }
+      .hero-ctas .btn { text-align: center; justify-content: center; padding: 14px 20px !important; font-size: 14px !important; }
+
+      /* Section spacing */
+      #projects, #services, #testimonials, #feature, #cta { padding: 56px 0; }
+      h2 { font-size: clamp(22px, 6vw, 34px); }
+      .section-sub { font-size: 14px; }
+      .section-header { margin-bottom: 36px; }
+      .projects-header-row { flex-direction: column; gap: 12px; align-items: flex-start; margin-bottom: 28px; }
+
+      /* Services header */
+      #services .section-header { flex-direction: column; gap: 12px; align-items: flex-start; }
+      #services .section-sub { margin-top: 0; }
+
+      /* Grids → single column */
+      .projects-grid,
+      .howitworks-grid,
+      .services-grid,
+      .testimonials-grid { grid-template-columns: 1fr; gap: 16px; }
+
+      /* How it works cards */
+      .project-card .project-info { padding: 24px 22px !important; }
+
+      /* Service cards */
+      .service-card { padding: 26px 22px; }
+      .service-icon-wrap { width: 42px; height: 42px; margin-bottom: 18px; }
+
+      /* Feature / stats */
+      #feature { padding: 56px 0; }
+      .feature-stat-row { grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 28px; }
+      .feature-stat { padding: 18px 14px; }
+      .feature-stat-num { font-size: 28px; margin-bottom: 4px; }
+      .feature-stat-label { font-size: 11px; }
+      .feature-card-body { padding: 20px 18px; }
+      .psr-label { font-size: 12px; }
+
+      /* CTA */
+      #cta { padding: 56px 0; }
+      .cta-inner { flex-direction: column; text-align: center; gap: 24px; }
       .cta-text p { margin-left: auto; margin-right: auto; }
-      .footer-top { grid-template-columns: 1fr; }
-      .section-header.split { flex-direction: column; }
-      .projects-header-row { flex-direction: column; gap: 16px; align-items: flex-start; }
+      .cta-actions { width: 100%; justify-content: center; }
+
+      /* Footer */
+      footer { padding: 44px 0 24px; }
+      .footer-top { grid-template-columns: 1fr; gap: 28px; margin-bottom: 32px; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; gap: 8px; }
+    }
+
+    @media (max-width: 480px) {
+      .container { padding: 0 16px; }
+      #hero { padding: 80px 0 44px; }
+      h1 { font-size: clamp(26px, 7vw, 32px); }
+      .feature-stat-num { font-size: 24px; }
+      .feature-stat { padding: 14px 12px; }
+      .testimonials-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -908,7 +970,7 @@
       </div>
     </div>
 
-    <div class="projects-grid" style="grid-template-columns: repeat(3, 1fr);">
+    <div class="projects-grid howitworks-grid">
       <div class="project-card reveal">
         <div class="project-info" style="padding:36px 32px;">
           <span class="project-tag" style="position:static;display:inline-block;margin-bottom:20px;">01 — DISCOVER</span>
