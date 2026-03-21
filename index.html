@@ -495,8 +495,7 @@
       background: var(--navy);
     }
     .feature-inner {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
-      align-items: center;
+      max-width: 720px;
     }
     .feature-text .section-eyebrow { color: var(--teal); }
     .feature-text h2 { color: var(--white); }
@@ -794,18 +793,27 @@
       #services .section-header { flex-direction: column; gap: 12px; align-items: flex-start; }
       #services .section-sub { margin-top: 0; }
 
-      /* Grids → single column */
+      /* Grids */
       .projects-grid,
-      .howitworks-grid,
-      .services-grid,
-      .testimonials-grid { grid-template-columns: 1fr; gap: 16px; }
+      .howitworks-grid { grid-template-columns: 1fr; gap: 16px; }
+
+      /* Services → 2 across, 3 down */
+      .services-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+
+      /* Who we help → equal 2×2 */
+      .testimonials-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+      .testimonials-grid .testimonial-card { min-height: 0; height: 100%; }
 
       /* How it works cards */
       .project-card .project-info { padding: 24px 22px !important; }
 
-      /* Service cards */
-      .service-card { padding: 26px 22px; }
-      .service-icon-wrap { width: 42px; height: 42px; margin-bottom: 18px; }
+      /* Service cards — compact for 2-col */
+      .service-card { padding: 20px 16px; }
+      .service-icon-wrap { width: 38px; height: 38px; margin-bottom: 14px; }
+      .service-icon-wrap svg { width: 18px; height: 18px; }
+      .service-title { font-size: 13px; }
+      .service-desc { font-size: 12px; line-height: 1.6; }
+      .service-link { font-size: 11px; margin-top: 14px; }
 
       /* Feature / stats */
       #feature { padding: 56px 0; }
@@ -834,7 +842,6 @@
       h1 { font-size: clamp(26px, 7vw, 32px); }
       .feature-stat-num { font-size: 24px; }
       .feature-stat { padding: 14px 12px; }
-      .testimonials-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -1158,41 +1165,6 @@
         <a href="#cta" class="btn btn-primary" style="margin-top:36px;padding:13px 28px;font-size:14px;">Work with us</a>
       </div>
 
-      <div class="feature-visual reveal reveal-d2">
-        <div class="feature-card">
-          <div class="feature-card-header">
-            <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
-            <span style="font-size:12px;color:rgba(255,255,255,0.3);margin-left:8px;font-family:'Roboto Mono',monospace;">engagement-progress.ai</span>
-          </div>
-          <div class="feature-card-body">
-            <div style="font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:20px;font-weight:600;">Active Engagements</div>
-            <div class="process-step-row">
-              <div class="psr-num">01</div>
-              <div class="psr-label">Discovery & Audit</div>
-              <div class="psr-bar"><div class="psr-fill" style="width:100%"></div></div>
-              <div class="psr-pct">Done</div>
-            </div>
-            <div class="process-step-row">
-              <div class="psr-num">02</div>
-              <div class="psr-label">AI Roadmap</div>
-              <div class="psr-bar"><div class="psr-fill" style="width:100%"></div></div>
-              <div class="psr-pct">Done</div>
-            </div>
-            <div class="process-step-row">
-              <div class="psr-num">03</div>
-              <div class="psr-label">Implementation</div>
-              <div class="psr-bar"><div class="psr-fill" style="width:72%"></div></div>
-              <div class="psr-pct">72%</div>
-            </div>
-            <div class="process-step-row">
-              <div class="psr-num">04</div>
-              <div class="psr-label">Scale & Optimise</div>
-              <div class="psr-bar"><div class="psr-fill" style="width:18%"></div></div>
-              <div class="psr-pct">18%</div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </section>
@@ -1239,19 +1211,19 @@
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Company</h4>
-        <ul>
-          <li><a href="#feature">About</a></li>
-          <li><a href="#projects">Work</a></li>
-          <li><a href="#testimonials">Clients</a></li>
-          <li><a href="#cta">Contact</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
         <h4>Contact</h4>
         <ul>
           <li><a href="mailto:Hello@offpisteai.com">Hello@offpisteai.com</a></li>
           <li><a href="https://www.linkedin.com/company/off-piste-ai/" target="_blank" rel="noopener">LinkedIn</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#feature">About</a></li>
+          <li><a href="#projects">How It Works</a></li>
+          <li><a href="#testimonials">Who We Help</a></li>
+          <li><a href="#cta">Book a Call</a></li>
         </ul>
       </div>
     </div>
