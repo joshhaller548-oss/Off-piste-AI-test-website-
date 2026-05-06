@@ -5,23 +5,14 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const screenshotDir = path.join(__dirname, 'temporary screenshots');
+if (!fs.existsSync(screenshotDir)) fs.mkdirSync(screenshotDir, { recursive: true });
 
-if (!fs.existsSync(screenshotDir)) {
-  fs.mkdirSync(screenshotDir, { recursive: true });
-}
-
-// Auto-increment filename, never overwrite
 function nextFilename(label) {
-  const files = fs.readdirSync(screenshotDir).filter(f => f.startsWith('screenshot-') && f.endsWith('.png'));
+  const files = fs.readdirSync(screenshotDir).filter(f => /^screenshot-\d+/.test(f) && f.endsWith('.png'));
   let max = 0;
-  for (const f of files) {
-    const match = f.match(/^screenshot-(\d+)/);
-    if (match) max = Math.max(max, parseInt(match[1], 10));
-  }
+  for (const f of files) { const m = f.match(/^screenshot-(\d+)/); if (m) max = Math.max(max, +m[1]); }
   const n = max + 1;
-  return label
-    ? `screenshot-${n}-${label}.png`
-    : `screenshot-${n}.png`;
+  return label ? `screenshot-${n}-${label}.png` : `screenshot-${n}.png`;
 }
 
 const url   = process.argv[2] || 'http://localhost:3000';
@@ -29,39 +20,52 @@ const label = process.argv[3] || '';
 
 const browser = await puppeteer.launch({
   headless: true,
-  args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  args: ['--no-sandbox', '--disable-setuid-sandbox', '--force-color-profile=srgb'],
 });
 
 const page = await browser.newPage();
+await page.setRequestInterception(true);
+// Block Calendly CSS — defers Google Fonts in headless mode
+page.on('request', req => req.url().includes('calendly.com') ? req.abort() : req.continue());
+
 await page.setViewport({ width: 1440, height: 900, deviceScaleFactor: 2 });
+await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 25000 });
 
-await page.goto(url, { waitUntil: 'networkidle2', timeout: 15000 });
+// Wait for fonts
+await page.evaluate(() => document.fonts.ready);
+await new Promise(r => setTimeout(r, 2000));
 
-// Force all scroll-reveal elements visible (IntersectionObserver won't fire in headless full-page mode)
-// Also lock stat counters to their final values immediately
+// Remove 'js' class (disables reveal opacity:0) and kill all transitions
 await page.evaluate(() => {
-  document.querySelectorAll('.reveal').forEach(el => el.classList.add('up'));
-  const nums = document.querySelectorAll('.stat-num');
-  const finals = ['50+', '3×', '15+', '100%'];
-  nums.forEach((el, i) => { if (finals[i]) el.textContent = finals[i]; });
+  document.documentElement.classList.remove('js');
+  const s = document.createElement('style');
+  s.textContent = '*, *::before, *::after { transition: none !important; animation: none !important; }';
+  document.head.appendChild(s);
 });
 
-// Scroll through the page to trigger any remaining observers and load lazy content
+// Slow scroll forces browser to paint every off-screen section
 const pageHeight = await page.evaluate(() => document.body.scrollHeight);
-const step = 600;
-for (let y = 0; y < pageHeight; y += step) {
-  await page.evaluate(pos => window.scrollTo(0, pos), y);
-  await new Promise(r => setTimeout(r, 60));
+for (let y = 0; y <= pageHeight; y += 200) {
+  await page.evaluate(y => window.scrollTo(0, y), y);
+  await new Promise(r => setTimeout(r, 80));
 }
 await page.evaluate(() => window.scrollTo(0, 0));
+await new Promise(r => setTimeout(r, 500));
 
-// Wait for animations to settle
-await new Promise(r => setTimeout(r, 1200));
-
+// Capture each viewport-height slice
+const slices = Math.ceil(pageHeight / 900);
 const filename = nextFilename(label);
-const filepath = path.join(screenshotDir, filename);
+const basename = filename.replace('.png', '');
 
-await page.screenshot({ path: filepath, fullPage: true });
+if (slices === 1) {
+  await page.screenshot({ path: path.join(screenshotDir, filename) });
+  console.log(`Screenshot saved: temporary screenshots/${filename}`);
+} else {
+  // Take single full-height screenshot by setting tall viewport (fonts already rendered)
+  await page.setViewport({ width: 1440, height: pageHeight, deviceScaleFactor: 2 });
+  await new Promise(r => setTimeout(r, 300));
+  await page.screenshot({ path: path.join(screenshotDir, filename), fullPage: false });
+  console.log(`Screenshot saved: temporary screenshots/${filename}`);
+}
+
 await browser.close();
-
-console.log(`Screenshot saved: temporary screenshots/${filename}`);
