@@ -1231,16 +1231,15 @@ function App() {
   return (
     <>
       {settings.grain && <div className="grain"/>}
-      <Nav onBook={() => setBookOpen(true)}/>
-      <Hero onBook={() => setBookOpen(true)}/>
+      <Nav onBook={() => window.open('https://meet.google.com/zkg-poit-gvc', '_blank')}/>
+      <Hero onBook={() => window.open('https://meet.google.com/zkg-poit-gvc', '_blank')}/>
       <VoiceAgent/>
       <Process/>
       <Services/>
       <Industries/>
       <Stats/>
-      <CTA onBook={() => setBookOpen(true)}/>
+      <CTA onBook={() => window.open('https://meet.google.com/zkg-poit-gvc', '_blank')}/>
       <Footer/>
-      <BookingModal open={bookOpen} onClose={() => setBookOpen(false)}/>
       <Tweaks settings={settings} setSettings={updateSettings} visible={tweaksVisible}/>
     </>
   );
