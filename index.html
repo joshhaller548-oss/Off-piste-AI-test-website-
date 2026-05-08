@@ -995,14 +995,28 @@ window.Footer = Footer;
 
 
 // components/BookingModal.jsx
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DNAMES = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+const TIMES = ['9:00 AM','9:30 AM','10:00 AM','10:30 AM','11:00 AM','11:30 AM',
+               '1:00 PM','1:30 PM','2:00 PM','2:30 PM','3:00 PM','3:30 PM','4:00 PM','4:30 PM'];
+
 const BookingModal = ({ open, onClose }) => {
-  const [step, setStep] = React.useState(0);
-  const [form, setForm] = React.useState({ name:'', email:'', company:'', industry:'Wellness & Spa', pain:'' });
-  const [err, setErr] = React.useState({});
+  const now = new Date();
+  const [vYear, setVYear] = React.useState(now.getFullYear());
+  const [vMonth, setVMonth] = React.useState(now.getMonth());
+  const [selDate, setSelDate] = React.useState(null);
+  const [selTime, setSelTime] = React.useState(null);
+  const [name, setName] = React.useState('');
+  const [email, setEmail] = React.useState('');
   const [done, setDone] = React.useState(false);
+  const [err, setErr] = React.useState('');
 
   React.useEffect(() => {
-    if (open) { setStep(0); setForm({ name:'', email:'', company:'', industry:'Wellness & Spa', pain:'' }); setErr({}); setDone(false); }
+    if (open) {
+      const n = new Date();
+      setVYear(n.getFullYear()); setVMonth(n.getMonth());
+      setSelDate(null); setSelTime(null); setName(''); setEmail(''); setDone(false); setErr('');
+    }
     const esc = (e) => { if (e.key === 'Escape') onClose(); };
     document.addEventListener('keydown', esc);
     return () => document.removeEventListener('keydown', esc);
@@ -1010,112 +1024,169 @@ const BookingModal = ({ open, onClose }) => {
 
   if (!open) return null;
 
-  const validate0 = () => {
-    const e = {};
-    if (!form.name.trim()) e.name = 'Required';
-    if (!/^\S+@\S+\.\S+$/.test(form.email)) e.email = 'Valid email required';
-    setErr(e);
-    return Object.keys(e).length === 0;
-  };
-  const validate1 = () => {
-    const e = {};
-    if (!form.company.trim()) e.company = 'Required';
-    setErr(e);
-    return Object.keys(e).length === 0;
+  const prevMonth = () => { if (vMonth === 0) { setVMonth(11); setVYear(y => y-1); } else setVMonth(m => m-1); };
+  const nextMonth = () => { if (vMonth === 11) { setVMonth(0); setVYear(y => y+1); } else setVMonth(m => m+1); };
+
+  const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const firstDay = new Date(vYear, vMonth, 1).getDay();
+  const daysInMonth = new Date(vYear, vMonth + 1, 0).getDate();
+  const isPrevDisabled = vYear === now.getFullYear() && vMonth === now.getMonth();
+
+  const calCells = [];
+  for (let i = 0; i < firstDay; i++) calCells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) calCells.push(d);
+
+  const submit = () => {
+    if (!name.trim() || !email.trim()) { setErr('Please enter your name and email.'); return; }
+    if (!/^\S+@\S+\.\S+$/.test(email)) { setErr('Please enter a valid email.'); return; }
+    setErr('');
+
+    const pad = n => String(n).padStart(2,'0');
+    const [time, period] = selTime.split(' ');
+    let [h, m] = time.split(':').map(Number);
+    if (period === 'PM' && h !== 12) h += 12;
+    if (period === 'AM' && h === 12) h = 0;
+    const endM = (m + 30) % 60, endH = m + 30 >= 60 ? h + 1 : h;
+    const ds = `${selDate.y}${pad(selDate.m+1)}${pad(selDate.d)}`;
+    const startDT = `${ds}T${pad(h)}${pad(m)}00`, endDT = `${ds}T${pad(endH)}${pad(endM)}00`;
+
+    const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE` +
+      `&text=${encodeURIComponent('30 Min Call — offpiste AI')}` +
+      `&details=${encodeURIComponent('Join via Google Meet: https://meet.google.com/zkg-poit-gvc\n\nBooked by: ' + name + ' (' + email + ')')}` +
+      `&dates=${startDT}/${endDT}` +
+      `&add=${encodeURIComponent('Hello@offpisteai.com')}` +
+      `&ctz=Europe%2FLondon` +
+      `&location=${encodeURIComponent('https://meet.google.com/zkg-poit-gvc')}`;
+
+    const dateStr = new Date(selDate.y, selDate.m, selDate.d)
+      .toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+    const subject = encodeURIComponent(`Meeting Request — ${name}`);
+    const body = encodeURIComponent(`Hi,\n\nI'd like to book a 30-minute Google Meet.\n\nName: ${name}\nEmail: ${email}\nDate: ${dateStr}\nTime: ${selTime}\nMeet: https://meet.google.com/zkg-poit-gvc\n\nLooking forward to connecting!`);
+
+    window.open(gcalUrl, '_blank');
+    window.location.href = `mailto:Hello@offpisteai.com?subject=${subject}&body=${body}`;
+    setDone(true);
   };
 
-  const next = () => {
-    if (step === 0 && !validate0()) return;
-    if (step === 1 && !validate1()) return;
-    if (step < 2) setStep(step + 1);
-    else {
-      setDone(true);
-    }
-  };
-
-  const set = (k) => (e) => setForm(f => ({ ...f, [k]: e.target.value }));
+  const selectedLabel = selDate
+    ? new Date(selDate.y, selDate.m, selDate.d).toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long' })
+    : null;
 
   return (
     <div className="modal-scrim" onClick={onClose}>
-      <div className="modal" onClick={e => e.stopPropagation()}>
-        <button className="close" onClick={onClose}><Icon name="close" size={14}/></button>
+      <div className="modal" style={{maxWidth:600,padding:0,overflow:'hidden'}} onClick={e => e.stopPropagation()}>
+        <button className="close" style={{top:16,right:16,zIndex:2}} onClick={onClose}><Icon name="close" size={14}/></button>
+
         {done ? (
-          <div className="success">
+          <div className="success" style={{padding:'48px 40px'}}>
             <div className="tick"><Icon name="check" size={22}/></div>
-            <h3 style={{margin:'8px 0 4px'}}>We'll be in touch.</h3>
-            <p className="sub" style={{margin:0}}>Expect a reply from Fred within 1 working day with a calendar link.</p>
+            <h3 style={{margin:'8px 0 4px'}}>Request sent.</h3>
+            <p className="sub" style={{margin:0}}>Your Google Calendar invite has been created with the Meet link. We'll confirm shortly.</p>
           </div>
         ) : (
-          <>
-            <span className="eyebrow" style={{marginBottom:12,display:'inline-flex'}}>STEP {step+1} / 3</span>
-            <h3>
-              {step === 0 && 'Let\'s get introduced.'}
-              {step === 1 && 'Tell us about your business.'}
-              {step === 2 && 'Where is revenue leaking?'}
-            </h3>
-            <p className="sub">
-              {step === 0 && 'Your name and email. Takes 20 seconds.'}
-              {step === 1 && 'So we can prep specifically for your call.'}
-              {step === 2 && 'Optional, but helps us walk in with a plan.'}
-            </p>
-
-            {step === 0 && (
-              <>
-                <div className="field">
-                  <label>Full name</label>
-                  <input value={form.name} onChange={set('name')} placeholder="Jane Doe"/>
-                  {err.name && <div className="err">{err.name}</div>}
-                </div>
-                <div className="field">
-                  <label>Email</label>
-                  <input value={form.email} onChange={set('email')} placeholder="jane@company.com"/>
-                  {err.email && <div className="err">{err.email}</div>}
-                </div>
-              </>
-            )}
-
-            {step === 1 && (
-              <>
-                <div className="field">
-                  <label>Company</label>
-                  <input value={form.company} onChange={set('company')} placeholder="Verdana Wellness Spa"/>
-                  {err.company && <div className="err">{err.company}</div>}
-                </div>
-                <div className="field">
-                  <label>Industry</label>
-                  <select value={form.industry} onChange={set('industry')}>
-                    <option>Wellness & Spa</option>
-                    <option>Dental & Clinics</option>
-                    <option>Hospitality</option>
-                    <option>Home Services</option>
-                    <option>Real Estate</option>
-                    <option>Other</option>
-                  </select>
-                </div>
-              </>
-            )}
-
-            {step === 2 && (
-              <div className="field">
-                <label>Biggest pain right now (optional)</label>
-                <textarea rows="4" value={form.pain} onChange={set('pain')} placeholder="e.g. 30% no-show rate, losing ~£10k/month on missed evening calls..."/>
+          <div style={{display:'grid', gridTemplateColumns:'200px 1fr'}}>
+            {/* Sidebar */}
+            <div style={{background:'rgba(255,255,255,0.03)',borderRight:'1px solid var(--line)',padding:'32px 24px',display:'flex',flexDirection:'column',gap:16}}>
+              <div>
+                <LogoMark size={22}/>
+                <div style={{fontFamily:'JetBrains Mono',fontSize:9,letterSpacing:'0.16em',textTransform:'uppercase',color:'var(--ink-faint)',marginTop:10}}>offpiste AI</div>
               </div>
-            )}
-
-            <div className="modal-footer">
-              <div className="step-dots">
-                <span className={step >= 0 ? 'on' : ''}/>
-                <span className={step >= 1 ? 'on' : ''}/>
-                <span className={step >= 2 ? 'on' : ''}/>
-              </div>
-              <div style={{display:'flex',gap:8}}>
-                {step > 0 && <button onClick={() => setStep(step-1)} className="btn btn-ghost">← Back</button>}
-                <button onClick={next} className="btn btn-accent">
-                  {step < 2 ? 'Continue' : 'Send request'} <Icon name="arrow" size={14}/>
-                </button>
+              <div style={{fontFamily:'Instrument Serif',fontSize:22,lineHeight:1.1,marginTop:4}}>Book a<br/><em style={{color:'var(--accent)',fontStyle:'italic'}}>consultation</em></div>
+              <div style={{display:'flex',flexDirection:'column',gap:10,marginTop:8}}>
+                {[
+                  ['calendar','30 minutes'],
+                  ['phone','Google Meet'],
+                  ['spark','London (GMT/BST)'],
+                ].map(([icon, label]) => (
+                  <div key={label} style={{display:'flex',alignItems:'center',gap:8,fontSize:12,color:'var(--ink-dim)'}}>
+                    <Icon name={icon} size={13}/>{label}
+                  </div>
+                ))}
               </div>
             </div>
-          </>
+
+            {/* Main */}
+            <div style={{padding:'28px 28px 28px'}}>
+              {!selDate ? (
+                <>
+                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
+                    <span style={{fontFamily:'Instrument Serif',fontSize:18}}>{MONTHS[vMonth]} {vYear}</span>
+                    <div style={{display:'flex',gap:6}}>
+                      <button onClick={prevMonth} disabled={isPrevDisabled} className="btn btn-ghost" style={{padding:'6px 10px',opacity:isPrevDisabled?0.25:1}}>‹</button>
+                      <button onClick={nextMonth} className="btn btn-ghost" style={{padding:'6px 10px'}}>›</button>
+                    </div>
+                  </div>
+                  <div style={{display:'grid',gridTemplateColumns:'repeat(7,1fr)',gap:2,marginBottom:4}}>
+                    {DNAMES.map(d => <div key={d} style={{textAlign:'center',fontSize:10,fontFamily:'JetBrains Mono',color:'var(--ink-faint)',paddingBottom:6,letterSpacing:'0.1em'}}>{d}</div>)}
+                  </div>
+                  <div style={{display:'grid',gridTemplateColumns:'repeat(7,1fr)',gap:2}}>
+                    {calCells.map((d, i) => {
+                      if (!d) return <div key={`e${i}`}/>;
+                      const dt = new Date(vYear, vMonth, d);
+                      const past = dt < todayMidnight;
+                      const weekend = dt.getDay() === 0 || dt.getDay() === 6;
+                      const isToday = dt.getTime() === todayMidnight.getTime();
+                      const isSel = selDate && selDate.y === vYear && selDate.m === vMonth && selDate.d === d;
+                      const disabled = past || weekend;
+                      return (
+                        <button key={d} disabled={disabled} onClick={() => { setSelDate({y:vYear,m:vMonth,d}); setSelTime(null); }}
+                          style={{
+                            aspectRatio:'1',border:'none',borderRadius:8,fontSize:13,cursor:disabled?'not-allowed':'pointer',
+                            background: isSel ? 'var(--accent)' : isToday ? 'rgba(227,139,107,0.15)' : 'transparent',
+                            color: isSel ? 'var(--accent-ink)' : disabled ? 'var(--ink-faint)' : isToday ? 'var(--accent)' : 'var(--ink)',
+                            fontWeight: isToday||isSel ? 700 : 400,
+                            transition:'background .15s',
+                          }}
+                          onMouseEnter={e => { if(!disabled&&!isSel) e.currentTarget.style.background='rgba(255,255,255,0.06)'; }}
+                          onMouseLeave={e => { if(!isSel) e.currentTarget.style.background=isToday?'rgba(227,139,107,0.15)':'transparent'; }}
+                        >{d}</button>
+                      );
+                    })}
+                  </div>
+                </>
+              ) : !selTime ? (
+                <>
+                  <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:20}}>
+                    <button onClick={() => setSelDate(null)} className="btn btn-ghost" style={{padding:'4px 10px',fontSize:13}}>← Back</button>
+                    <span style={{fontFamily:'Instrument Serif',fontSize:16}}>{selectedLabel}</span>
+                  </div>
+                  <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
+                    {TIMES.map(t => (
+                      <button key={t} onClick={() => setSelTime(t)}
+                        style={{
+                          padding:'10px',border:'1px solid var(--line-strong)',borderRadius:8,
+                          fontSize:13,fontFamily:'JetBrains Mono',color:'var(--ink)',background:'transparent',cursor:'pointer',
+                          transition:'all .15s',
+                        }}
+                        onMouseEnter={e => { e.currentTarget.style.background='rgba(227,139,107,0.1)'; e.currentTarget.style.borderColor='var(--accent)'; }}
+                        onMouseLeave={e => { e.currentTarget.style.background='transparent'; e.currentTarget.style.borderColor='var(--line-strong)'; }}
+                      >{t}</button>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:4}}>
+                    <button onClick={() => setSelTime(null)} className="btn btn-ghost" style={{padding:'4px 10px',fontSize:13}}>← Back</button>
+                    <span style={{fontFamily:'Instrument Serif',fontSize:16}}>{selectedLabel}</span>
+                  </div>
+                  <div style={{fontFamily:'JetBrains Mono',fontSize:12,color:'var(--accent)',marginBottom:20}}>{selTime} · 30 min · Google Meet</div>
+                  <div className="field">
+                    <label>Full name</label>
+                    <input value={name} onChange={e => setName(e.target.value)} placeholder="Jane Smith"/>
+                  </div>
+                  <div className="field">
+                    <label>Email</label>
+                    <input value={email} onChange={e => setEmail(e.target.value)} placeholder="jane@company.com"/>
+                  </div>
+                  {err && <div style={{color:'var(--bad)',fontSize:12,fontFamily:'JetBrains Mono',marginBottom:12}}>{err}</div>}
+                  <button onClick={submit} className="btn btn-accent" style={{width:'100%',justifyContent:'center',padding:'14px'}}>
+                    Confirm booking <Icon name="arrow" size={14}/>
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
         )}
       </div>
     </div>
@@ -1231,15 +1302,16 @@ function App() {
   return (
     <>
       {settings.grain && <div className="grain"/>}
-      <Nav onBook={() => window.open('https://meet.google.com/zkg-poit-gvc', '_blank')}/>
-      <Hero onBook={() => window.open('https://meet.google.com/zkg-poit-gvc', '_blank')}/>
+      <Nav onBook={() => setBookOpen(true)}/>
+      <Hero onBook={() => setBookOpen(true)}/>
       <VoiceAgent/>
       <Process/>
       <Services/>
       <Industries/>
       <Stats/>
-      <CTA onBook={() => window.open('https://meet.google.com/zkg-poit-gvc', '_blank')}/>
+      <CTA onBook={() => setBookOpen(true)}/>
       <Footer/>
+      <BookingModal open={bookOpen} onClose={() => setBookOpen(false)}/>
       <Tweaks settings={settings} setSettings={updateSettings} visible={tweaksVisible}/>
     </>
   );
