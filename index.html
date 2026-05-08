@@ -404,10 +404,19 @@ footer{border-top:1px solid var(--line); padding:60px 0 40px; color:var(--ink-di
 .reveal{opacity:0; transform:translateY(20px); transition:opacity .8s, transform .8s}
 .reveal.in{opacity:1; transform:none}
 </style></head><body><div id="root"></div>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" onload="emailjs.init({publicKey:'UoAFNkZVUl3gYiqjD'})"></script>
 <script>
-  window.EMAILJS_SERVICE_ID  = 'service_sopp7rc';
-  window.EMAILJS_TEMPLATE_ID = 'template_r2njwwv';
+  window.sendBookingEmail = function(params) {
+    return fetch('https://api.emailjs.com/api/v1.0/email/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        service_id:      'service_sopp7rc',
+        template_id:     'template_r2njwwv',
+        user_id:         'UoAFNkZVUl3gYiqjD',
+        template_params: params
+      })
+    });
+  };
 </script>
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
@@ -1042,7 +1051,7 @@ const BookingModal = ({ open, onClose }) => {
   for (let i = 0; i < firstDay; i++) calCells.push(null);
   for (let d = 1; d <= daysInMonth; d++) calCells.push(d);
 
-  const submit = async () => {
+  const submit = () => {
     if (!name.trim() || !email.trim()) { setErr('Please enter your name and email.'); return; }
     if (!/^\S+@\S+\.\S+$/.test(email)) { setErr('Please enter a valid email.'); return; }
     setErr('');
@@ -1051,7 +1060,7 @@ const BookingModal = ({ open, onClose }) => {
     const dateStr = new Date(selDate.y, selDate.m, selDate.d)
       .toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
 
-    const templateParams = {
+    window.sendBookingEmail({
       client_name:  name,
       client_email: email,
       booking_date: dateStr,
@@ -1059,25 +1068,17 @@ const BookingModal = ({ open, onClose }) => {
       meet_link:    'https://meet.google.com/zkg-poit-gvc',
       to_email:     email,
       reply_to:     'Hello@offpisteai.com',
-    };
-
-    try {
-      if (typeof emailjs === 'undefined') throw new Error('EmailJS not loaded');
-      const result = await emailjs.send(
-        window.EMAILJS_SERVICE_ID,
-        window.EMAILJS_TEMPLATE_ID,
-        templateParams
-      );
-      console.log('EmailJS success:', result);
-    } catch (e) {
-      console.error('EmailJS error:', e);
+    }).then(function(res) {
       setSending(false);
-      setErr('Email failed: ' + (e.text || e.message || JSON.stringify(e)));
-      return;
-    }
-
-    setSending(false);
-    setDone(true);
+      if (res.ok) {
+        setDone(true);
+      } else {
+        res.text().then(function(t) { setErr('Failed: ' + t); });
+      }
+    }).catch(function(e) {
+      setSending(false);
+      setErr('Failed: ' + e.message);
+    });
   };
 
   const selectedLabel = selDate
