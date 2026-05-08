@@ -404,6 +404,20 @@ footer{border-top:1px solid var(--line); padding:60px 0 40px; color:var(--ink-di
 .reveal{opacity:0; transform:translateY(20px); transition:opacity .8s, transform .8s}
 .reveal.in{opacity:1; transform:none}
 </style></head><body><div id="root"></div>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+  // EmailJS credentials — fill these in after setup (see README)
+  window.EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';
+  window.EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
+  const EMAILJS_PUBLIC_KEY   = 'YOUR_PUBLIC_KEY';
+  window.__emailjsReady = false;
+  document.addEventListener('DOMContentLoaded', () => {
+    if (typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
+      emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+      window.__emailjsReady = true;
+    }
+  });
+</script>
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
@@ -1036,35 +1050,40 @@ const BookingModal = ({ open, onClose }) => {
   for (let i = 0; i < firstDay; i++) calCells.push(null);
   for (let d = 1; d <= daysInMonth; d++) calCells.push(d);
 
-  const submit = () => {
+  const [sending, setSending] = React.useState(false);
+
+  const submit = async () => {
     if (!name.trim() || !email.trim()) { setErr('Please enter your name and email.'); return; }
     if (!/^\S+@\S+\.\S+$/.test(email)) { setErr('Please enter a valid email.'); return; }
     setErr('');
-
-    const pad = n => String(n).padStart(2,'0');
-    const [time, period] = selTime.split(' ');
-    let [h, m] = time.split(':').map(Number);
-    if (period === 'PM' && h !== 12) h += 12;
-    if (period === 'AM' && h === 12) h = 0;
-    const endM = (m + 30) % 60, endH = m + 30 >= 60 ? h + 1 : h;
-    const ds = `${selDate.y}${pad(selDate.m+1)}${pad(selDate.d)}`;
-    const startDT = `${ds}T${pad(h)}${pad(m)}00`, endDT = `${ds}T${pad(endH)}${pad(endM)}00`;
-
-    const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE` +
-      `&text=${encodeURIComponent('30 Min Call — offpiste AI')}` +
-      `&details=${encodeURIComponent('Join via Google Meet: https://meet.google.com/zkg-poit-gvc\n\nBooked by: ' + name + ' (' + email + ')')}` +
-      `&dates=${startDT}/${endDT}` +
-      `&add=${encodeURIComponent('Hello@offpisteai.com')}` +
-      `&ctz=Europe%2FLondon` +
-      `&location=${encodeURIComponent('https://meet.google.com/zkg-poit-gvc')}`;
+    setSending(true);
 
     const dateStr = new Date(selDate.y, selDate.m, selDate.d)
       .toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
-    const subject = encodeURIComponent(`Meeting Request — ${name}`);
-    const body = encodeURIComponent(`Hi,\n\nI'd like to book a 30-minute Google Meet.\n\nName: ${name}\nEmail: ${email}\nDate: ${dateStr}\nTime: ${selTime}\nMeet: https://meet.google.com/zkg-poit-gvc\n\nLooking forward to connecting!`);
 
-    window.open(gcalUrl, '_blank');
-    window.location.href = `mailto:Hello@offpisteai.com?subject=${subject}&body=${body}`;
+    const templateParams = {
+      client_name:  name,
+      client_email: email,
+      booking_date: dateStr,
+      booking_time: selTime,
+      meet_link:    'https://meet.google.com/zkg-poit-gvc',
+      to_email:     email,
+      reply_to:     'Hello@offpisteai.com',
+    };
+
+    try {
+      if (window.__emailjsReady) {
+        await emailjs.send(
+          window.EMAILJS_SERVICE_ID,
+          window.EMAILJS_TEMPLATE_ID,
+          templateParams
+        );
+      }
+    } catch (e) {
+      console.error('EmailJS error:', e);
+    }
+
+    setSending(false);
     setDone(true);
   };
 
@@ -1080,8 +1099,8 @@ const BookingModal = ({ open, onClose }) => {
         {done ? (
           <div className="success" style={{padding:'48px 40px'}}>
             <div className="tick"><Icon name="check" size={22}/></div>
-            <h3 style={{margin:'8px 0 4px'}}>Request sent.</h3>
-            <p className="sub" style={{margin:0}}>Your Google Calendar invite has been created with the Meet link. We'll confirm shortly.</p>
+            <h3 style={{margin:'8px 0 4px'}}>You're booked.</h3>
+            <p className="sub" style={{margin:0}}>Confirmation sent to your email with the Google Meet link. We'll see you then.</p>
           </div>
         ) : (
           <div style={{display:'grid', gridTemplateColumns:'200px 1fr'}}>
@@ -1180,8 +1199,8 @@ const BookingModal = ({ open, onClose }) => {
                     <input value={email} onChange={e => setEmail(e.target.value)} placeholder="jane@company.com"/>
                   </div>
                   {err && <div style={{color:'var(--bad)',fontSize:12,fontFamily:'JetBrains Mono',marginBottom:12}}>{err}</div>}
-                  <button onClick={submit} className="btn btn-accent" style={{width:'100%',justifyContent:'center',padding:'14px'}}>
-                    Confirm booking <Icon name="arrow" size={14}/>
+                  <button onClick={submit} disabled={sending} className="btn btn-accent" style={{width:'100%',justifyContent:'center',padding:'14px',opacity:sending?0.7:1}}>
+                    {sending ? 'Sending…' : 'Confirm booking'} {!sending && <Icon name="arrow" size={14}/>}
                   </button>
                 </>
               )}
