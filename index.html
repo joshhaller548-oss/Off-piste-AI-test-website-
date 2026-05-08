@@ -1024,12 +1024,13 @@ const BookingModal = ({ open, onClose }) => {
   const [email, setEmail] = React.useState('');
   const [done, setDone] = React.useState(false);
   const [err, setErr] = React.useState('');
+  const [sending, setSending] = React.useState(false);
 
   React.useEffect(() => {
     if (open) {
       const n = new Date();
       setVYear(n.getFullYear()); setVMonth(n.getMonth());
-      setSelDate(null); setSelTime(null); setName(''); setEmail(''); setDone(false); setErr('');
+      setSelDate(null); setSelTime(null); setName(''); setEmail(''); setDone(false); setErr(''); setSending(false);
     }
     const esc = (e) => { if (e.key === 'Escape') onClose(); };
     document.addEventListener('keydown', esc);
@@ -1049,8 +1050,6 @@ const BookingModal = ({ open, onClose }) => {
   const calCells = [];
   for (let i = 0; i < firstDay; i++) calCells.push(null);
   for (let d = 1; d <= daysInMonth; d++) calCells.push(d);
-
-  const [sending, setSending] = React.useState(false);
 
   const submit = async () => {
     if (!name.trim() || !email.trim()) { setErr('Please enter your name and email.'); return; }
