@@ -404,18 +404,11 @@ footer{border-top:1px solid var(--line); padding:60px 0 40px; color:var(--ink-di
 .reveal{opacity:0; transform:translateY(20px); transition:opacity .8s, transform .8s}
 .reveal.in{opacity:1; transform:none}
 </style></head><body><div id="root"></div>
+<link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
+<script src="https://assets.calendly.com/assets/external/widget.js"></script>
 <script>
-  window.sendBookingEmail = function(params) {
-    return fetch('https://api.emailjs.com/api/v1.0/email/send', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        service_id:      'service_sopp7rc',
-        template_id:     'template_hb7zb9n',
-        user_id:         'UoAFNkZVUl3gYiqjD',
-        template_params: params
-      })
-    });
+  window.openBooking = function() {
+    Calendly.initPopupWidget({ url: 'https://calendly.com/offpisteai/30min' });
   };
 </script>
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
@@ -1008,204 +1001,7 @@ const Footer = () => (
 window.Footer = Footer;
 
 
-// components/BookingModal.jsx
-const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-const DNAMES = ['Su','Mo','Tu','We','Th','Fr','Sa'];
-const TIMES = ['9:00 AM','9:30 AM','10:00 AM','10:30 AM','11:00 AM','11:30 AM',
-               '1:00 PM','1:30 PM','2:00 PM','2:30 PM','3:00 PM','3:30 PM','4:00 PM','4:30 PM'];
-
-const BookingModal = ({ open, onClose }) => {
-  const now = new Date();
-  const [vYear, setVYear] = React.useState(now.getFullYear());
-  const [vMonth, setVMonth] = React.useState(now.getMonth());
-  const [selDate, setSelDate] = React.useState(null);
-  const [selTime, setSelTime] = React.useState(null);
-  const [name, setName] = React.useState('');
-  const [email, setEmail] = React.useState('');
-  const [done, setDone] = React.useState(false);
-  const [err, setErr] = React.useState('');
-  const [sending, setSending] = React.useState(false);
-
-  React.useEffect(() => {
-    if (open) {
-      const n = new Date();
-      setVYear(n.getFullYear()); setVMonth(n.getMonth());
-      setSelDate(null); setSelTime(null); setName(''); setEmail(''); setDone(false); setErr(''); setSending(false);
-    }
-    const esc = (e) => { if (e.key === 'Escape') onClose(); };
-    document.addEventListener('keydown', esc);
-    return () => document.removeEventListener('keydown', esc);
-  }, [open]);
-
-  if (!open) return null;
-
-  const prevMonth = () => { if (vMonth === 0) { setVMonth(11); setVYear(y => y-1); } else setVMonth(m => m-1); };
-  const nextMonth = () => { if (vMonth === 11) { setVMonth(0); setVYear(y => y+1); } else setVMonth(m => m+1); };
-
-  const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const firstDay = new Date(vYear, vMonth, 1).getDay();
-  const daysInMonth = new Date(vYear, vMonth + 1, 0).getDate();
-  const isPrevDisabled = vYear === now.getFullYear() && vMonth === now.getMonth();
-
-  const calCells = [];
-  for (let i = 0; i < firstDay; i++) calCells.push(null);
-  for (let d = 1; d <= daysInMonth; d++) calCells.push(d);
-
-  const submit = () => {
-    if (!name.trim() || !email.trim()) { setErr('Please enter your name and email.'); return; }
-    if (!/^\S+@\S+\.\S+$/.test(email)) { setErr('Please enter a valid email.'); return; }
-    setErr('');
-    setSending(true);
-
-    const dateStr = new Date(selDate.y, selDate.m, selDate.d)
-      .toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
-
-    window.sendBookingEmail({
-      client_name:  name,
-      client_email: email,
-      booking_date: dateStr,
-      booking_time: selTime,
-      meet_link:    'https://meet.google.com/zkg-poit-gvc',
-      to_email:     email,
-      reply_to:     'Hello@offpisteai.com',
-    }).then(function(res) {
-      setSending(false);
-      if (res.ok) {
-        setDone(true);
-      } else {
-        res.text().then(function(t) { setErr('Failed: ' + t); });
-      }
-    }).catch(function(e) {
-      setSending(false);
-      setErr('Failed: ' + e.message);
-    });
-  };
-
-  const selectedLabel = selDate
-    ? new Date(selDate.y, selDate.m, selDate.d).toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long' })
-    : null;
-
-  return (
-    <div className="modal-scrim" onClick={onClose}>
-      <div className="modal" style={{maxWidth:600,padding:0,overflow:'hidden'}} onClick={e => e.stopPropagation()}>
-        <button className="close" style={{top:16,right:16,zIndex:2}} onClick={onClose}><Icon name="close" size={14}/></button>
-
-        {done ? (
-          <div className="success" style={{padding:'48px 40px'}}>
-            <div className="tick"><Icon name="check" size={22}/></div>
-            <h3 style={{margin:'8px 0 4px'}}>You're booked.</h3>
-            <p className="sub" style={{margin:0}}>Confirmation sent to your email with the Google Meet link. We'll see you then.</p>
-          </div>
-        ) : (
-          <div style={{display:'grid', gridTemplateColumns:'200px 1fr'}}>
-            {/* Sidebar */}
-            <div style={{background:'rgba(255,255,255,0.03)',borderRight:'1px solid var(--line)',padding:'32px 24px',display:'flex',flexDirection:'column',gap:16}}>
-              <div>
-                <LogoMark size={22}/>
-                <div style={{fontFamily:'JetBrains Mono',fontSize:9,letterSpacing:'0.16em',textTransform:'uppercase',color:'var(--ink-faint)',marginTop:10}}>offpiste AI</div>
-              </div>
-              <div style={{fontFamily:'Instrument Serif',fontSize:22,lineHeight:1.1,marginTop:4}}>Book a<br/><em style={{color:'var(--accent)',fontStyle:'italic'}}>consultation</em></div>
-              <div style={{display:'flex',flexDirection:'column',gap:10,marginTop:8}}>
-                {[
-                  ['calendar','30 minutes'],
-                  ['phone','Google Meet'],
-                  ['spark','London (GMT/BST)'],
-                ].map(([icon, label]) => (
-                  <div key={label} style={{display:'flex',alignItems:'center',gap:8,fontSize:12,color:'var(--ink-dim)'}}>
-                    <Icon name={icon} size={13}/>{label}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Main */}
-            <div style={{padding:'28px 28px 28px'}}>
-              {!selDate ? (
-                <>
-                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
-                    <span style={{fontFamily:'Instrument Serif',fontSize:18}}>{MONTHS[vMonth]} {vYear}</span>
-                    <div style={{display:'flex',gap:6}}>
-                      <button onClick={prevMonth} disabled={isPrevDisabled} className="btn btn-ghost" style={{padding:'6px 10px',opacity:isPrevDisabled?0.25:1}}>‹</button>
-                      <button onClick={nextMonth} className="btn btn-ghost" style={{padding:'6px 10px'}}>›</button>
-                    </div>
-                  </div>
-                  <div style={{display:'grid',gridTemplateColumns:'repeat(7,1fr)',gap:2,marginBottom:4}}>
-                    {DNAMES.map(d => <div key={d} style={{textAlign:'center',fontSize:10,fontFamily:'JetBrains Mono',color:'var(--ink-faint)',paddingBottom:6,letterSpacing:'0.1em'}}>{d}</div>)}
-                  </div>
-                  <div style={{display:'grid',gridTemplateColumns:'repeat(7,1fr)',gap:2}}>
-                    {calCells.map((d, i) => {
-                      if (!d) return <div key={`e${i}`}/>;
-                      const dt = new Date(vYear, vMonth, d);
-                      const past = dt < todayMidnight;
-                      const weekend = dt.getDay() === 0 || dt.getDay() === 6;
-                      const isToday = dt.getTime() === todayMidnight.getTime();
-                      const isSel = selDate && selDate.y === vYear && selDate.m === vMonth && selDate.d === d;
-                      const disabled = past || weekend;
-                      return (
-                        <button key={d} disabled={disabled} onClick={() => { setSelDate({y:vYear,m:vMonth,d}); setSelTime(null); }}
-                          style={{
-                            aspectRatio:'1',border:'none',borderRadius:8,fontSize:13,cursor:disabled?'not-allowed':'pointer',
-                            background: isSel ? 'var(--accent)' : isToday ? 'rgba(227,139,107,0.15)' : 'transparent',
-                            color: isSel ? 'var(--accent-ink)' : disabled ? 'var(--ink-faint)' : isToday ? 'var(--accent)' : 'var(--ink)',
-                            fontWeight: isToday||isSel ? 700 : 400,
-                            transition:'background .15s',
-                          }}
-                          onMouseEnter={e => { if(!disabled&&!isSel) e.currentTarget.style.background='rgba(255,255,255,0.06)'; }}
-                          onMouseLeave={e => { if(!isSel) e.currentTarget.style.background=isToday?'rgba(227,139,107,0.15)':'transparent'; }}
-                        >{d}</button>
-                      );
-                    })}
-                  </div>
-                </>
-              ) : !selTime ? (
-                <>
-                  <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:20}}>
-                    <button onClick={() => setSelDate(null)} className="btn btn-ghost" style={{padding:'4px 10px',fontSize:13}}>← Back</button>
-                    <span style={{fontFamily:'Instrument Serif',fontSize:16}}>{selectedLabel}</span>
-                  </div>
-                  <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
-                    {TIMES.map(t => (
-                      <button key={t} onClick={() => setSelTime(t)}
-                        style={{
-                          padding:'10px',border:'1px solid var(--line-strong)',borderRadius:8,
-                          fontSize:13,fontFamily:'JetBrains Mono',color:'var(--ink)',background:'transparent',cursor:'pointer',
-                          transition:'all .15s',
-                        }}
-                        onMouseEnter={e => { e.currentTarget.style.background='rgba(227,139,107,0.1)'; e.currentTarget.style.borderColor='var(--accent)'; }}
-                        onMouseLeave={e => { e.currentTarget.style.background='transparent'; e.currentTarget.style.borderColor='var(--line-strong)'; }}
-                      >{t}</button>
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:4}}>
-                    <button onClick={() => setSelTime(null)} className="btn btn-ghost" style={{padding:'4px 10px',fontSize:13}}>← Back</button>
-                    <span style={{fontFamily:'Instrument Serif',fontSize:16}}>{selectedLabel}</span>
-                  </div>
-                  <div style={{fontFamily:'JetBrains Mono',fontSize:12,color:'var(--accent)',marginBottom:20}}>{selTime} · 30 min · Google Meet</div>
-                  <div className="field">
-                    <label>Full name</label>
-                    <input value={name} onChange={e => setName(e.target.value)} placeholder="Jane Smith"/>
-                  </div>
-                  <div className="field">
-                    <label>Email</label>
-                    <input value={email} onChange={e => setEmail(e.target.value)} placeholder="jane@company.com"/>
-                  </div>
-                  {err && <div style={{color:'var(--bad)',fontSize:12,fontFamily:'JetBrains Mono',marginBottom:12}}>{err}</div>}
-                  <button onClick={submit} disabled={sending} className="btn btn-accent" style={{width:'100%',justifyContent:'center',padding:'14px',opacity:sending?0.7:1}}>
-                    {sending ? 'Sending…' : 'Confirm booking'} {!sending && <Icon name="arrow" size={14}/>}
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-window.BookingModal = BookingModal;
+window.BookingModal = () => null;
 
 
 // components/Tweaks.jsx
@@ -1263,7 +1059,6 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
 }/*EDITMODE-END*/;
 
 function App() {
-  const [bookOpen, setBookOpen] = React.useState(false);
   const [settings, setSettings] = React.useState(TWEAK_DEFAULTS);
   const [tweaksVisible, setTweaksVisible] = React.useState(false);
 
@@ -1315,16 +1110,15 @@ function App() {
   return (
     <>
       {settings.grain && <div className="grain"/>}
-      <Nav onBook={() => setBookOpen(true)}/>
-      <Hero onBook={() => setBookOpen(true)}/>
+      <Nav onBook={window.openBooking}/>
+      <Hero onBook={window.openBooking}/>
       <VoiceAgent/>
       <Process/>
       <Services/>
       <Industries/>
       <Stats/>
-      <CTA onBook={() => setBookOpen(true)}/>
+      <CTA onBook={window.openBooking}/>
       <Footer/>
-      <BookingModal open={bookOpen} onClose={() => setBookOpen(false)}/>
       <Tweaks settings={settings} setSettings={updateSettings} visible={tweaksVisible}/>
     </>
   );
