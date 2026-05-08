@@ -404,19 +404,10 @@ footer{border-top:1px solid var(--line); padding:60px 0 40px; color:var(--ink-di
 .reveal{opacity:0; transform:translateY(20px); transition:opacity .8s, transform .8s}
 .reveal.in{opacity:1; transform:none}
 </style></head><body><div id="root"></div>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" onload="emailjs.init('UoAFNkZVUl3gYiqjD')"></script>
 <script>
-  // EmailJS credentials — fill these in after setup (see README)
   window.EMAILJS_SERVICE_ID  = 'service_sopp7rc';
   window.EMAILJS_TEMPLATE_ID = 'template_r2njwwv';
-  const EMAILJS_PUBLIC_KEY   = 'UoAFNkZVUl3gYiqjD';
-  window.__emailjsReady = false;
-  document.addEventListener('DOMContentLoaded', () => {
-    if (typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
-      emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
-      window.__emailjsReady = true;
-    }
-  });
 </script>
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
@@ -1071,13 +1062,11 @@ const BookingModal = ({ open, onClose }) => {
     };
 
     try {
-      if (window.__emailjsReady) {
-        await emailjs.send(
-          window.EMAILJS_SERVICE_ID,
-          window.EMAILJS_TEMPLATE_ID,
-          templateParams
-        );
-      }
+      await emailjs.send(
+        window.EMAILJS_SERVICE_ID,
+        window.EMAILJS_TEMPLATE_ID,
+        templateParams
+      );
     } catch (e) {
       console.error('EmailJS error:', e);
     }
